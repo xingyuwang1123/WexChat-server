@@ -1,0 +1,19 @@
+# depslib dependency file v1.0
+1583934624 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_server.c
+	"wex_server.h"
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<pthread.h>
+	<errno.h>
+	<string.h>
+	<sys/socket.h>
+	<netinet/in.h>
+
+1583935504 source:/home/sca/Documents/WexChat-server/wexchat-server/main.c
+	<stdio.h>
+	<stdlib.h>
+	"wex_server.h"
+
+1583934335 /home/sca/Documents/WexChat-server/wexchat-server/wex_server.h
+
