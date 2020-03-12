@@ -36,12 +36,40 @@
 			<Option compilerVar="CC" />
 			<Option virtualFolder="server/" />
 		</Unit>
+		<Unit filename="threadpool.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="tools/" />
+		</Unit>
+		<Unit filename="threadpool.h">
+			<Option virtualFolder="tools/" />
+		</Unit>
+		<Unit filename="wex_hashmap.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="tools/" />
+		</Unit>
+		<Unit filename="wex_hashmap.h">
+			<Option virtualFolder="tools/" />
+		</Unit>
+		<Unit filename="wex_list.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="tools/" />
+		</Unit>
+		<Unit filename="wex_list.h">
+			<Option virtualFolder="tools/" />
+		</Unit>
 		<Unit filename="wex_server.c">
 			<Option compilerVar="CC" />
 			<Option virtualFolder="server/" />
 		</Unit>
 		<Unit filename="wex_server.h">
 			<Option virtualFolder="server/" />
+		</Unit>
+		<Unit filename="wex_unixconf.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="tools/" />
+		</Unit>
+		<Unit filename="wex_unixconf.h">
+			<Option virtualFolder="tools/" />
 		</Unit>
 		<Extensions>
 			<code_completion />

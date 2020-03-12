@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1583934624 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_server.c
+1584027560 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_server.c
 	"wex_server.h"
 	<stdio.h>
 	<stdlib.h>
@@ -9,11 +9,50 @@
 	<string.h>
 	<sys/socket.h>
 	<netinet/in.h>
+	"threadpool.h"
 
-1583935504 source:/home/sca/Documents/WexChat-server/wexchat-server/main.c
+1584001392 source:/home/sca/Documents/WexChat-server/wexchat-server/main.c
 	<stdio.h>
 	<stdlib.h>
 	"wex_server.h"
 
-1583934335 /home/sca/Documents/WexChat-server/wexchat-server/wex_server.h
+1584027011 /home/sca/Documents/WexChat-server/wexchat-server/wex_server.h
+
+1583994473 source:/home/sca/Documents/WexChat-server/wexchat-server/threadpool.c
+	<stdlib.h>
+	<pthread.h>
+	<unistd.h>
+	"threadpool.h"
+
+1583989013 /home/sca/Documents/WexChat-server/wexchat-server/threadpool.h
+
+1583999242 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_unixconf.c
+	"wex_unixconf.h"
+	<unistd.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<fcntl.h>
+	<errno.h>
+
+1583993350 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_hashmap.c
+	<stdio.h>
+	<stdlib.h>
+	"wex_hashmap.h"
+
+1583992408 /home/sca/Documents/WexChat-server/wexchat-server/wex_hashmap.h
+
+1583998443 /home/sca/Documents/WexChat-server/wexchat-server/wex_unixconf.h
+	"wex_hashmap.h"
+
+1584001029 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_list.c
+	"wex_list.h"
+
+1584000327 /home/sca/Documents/WexChat-server/wexchat-server/wex_list.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<assert.h>
 
