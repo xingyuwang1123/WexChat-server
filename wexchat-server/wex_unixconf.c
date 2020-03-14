@@ -8,10 +8,10 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
+#include "wexlog.h"
 
 
-ssize_t
-readline(int fd, void *vptr, ssize_t maxlen)
+ssize_t readline(int fd, void *vptr, ssize_t maxlen)
 {
 	ssize_t n, rc;
 	char c, *ptr;
@@ -23,8 +23,11 @@ readline(int fd, void *vptr, ssize_t maxlen)
 		if ((rc = read(fd, &c, 1)) == 1)
 		{
 			*ptr++ = c;
-			if (c == '\n')
-				break;
+			if (c == '\n') {
+                *(ptr-1) = '\0';
+                break;
+			}
+
 		}
 		else if (rc == 0)
 		{
@@ -51,26 +54,28 @@ wex_confres_t *wex_loadconf(const char *filepath, wex_conf_type type) {
     char buf[MAXLINE];
     ssize_t n;
     if ((fd = open(filepath, O_RDONLY | O_CLOEXEC)) < 0) {
-        perror("open");
-        exit(-1);
+        //perror("open");
+        //exit(-1);
+        wexlog(wex_log_error_with_perror, "open");
     }
     while((n = readline(fd, buf, MAXLINE)) > 0) {
         //skip #
         if(buf[0] == '#' || buf[0] == '\n' || buf[0] == '\r') {
             continue;
         }
-        char namebuf[MAXLINE/2];
+        char *namebuf = malloc(sizeof(char) * (MAXLINE/2));
         char *attrbuf = malloc(sizeof(char) * (MAXLINE/2));
         char *token = strtok(buf, "=");
         if (token != NULL) {
         //if second attr exists , put them into queue
             strncpy(namebuf, token, MAXLINE/2);
             strncpy(attrbuf, strtok(NULL, "="), MAXLINE/2);\
-            shashmap_put(res->conf_map, (void*)namebuf, (void*)attrbuf);
+            shashmap_put(res->conf_map, namebuf, attrbuf);
         }
         else {
-            printf("error in reading configuration.\n");
-            exit(1);
+            //printf("error in reading configuration.\n");
+            //exit(1);
+            wexlog(wex_log_error, "error in reading configuration.");
         }
     }
     close(fd);
@@ -87,9 +92,9 @@ void wex_free_conf(wex_confres_t *conf) {
 //test main
 //int main () {
 //    wex_confres_t *res = wex_loadconf(CONF_FILEPATH, 1);
-//    printf("configure1:%s\n", shashmap_get(res->conf_map, "configure1"));
-//    printf("configure2:%s\n", shashmap_get(res->conf_map, "configure2"));
-//    printf("configure3:%s\n", shashmap_get(res->conf_map, "configure3"));
+//    printf("configure1:%s\n", shashmap_get(res->conf_map, "SERVER_PORT"));
+//    printf("configure2:%s\n", shashmap_get(res->conf_map, "MAX_THREAD_QUEUE_COUNT"));
+//    printf("configure3:%s\n", shashmap_get(res->conf_map, "MAX_THREAD_QUEUE_SIZE"));
 //    wex_free_conf(res);
 //    return 0;
 //}
