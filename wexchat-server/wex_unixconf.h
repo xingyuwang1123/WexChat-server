@@ -4,7 +4,6 @@
 #include "wex_hashmap.h"
 
 #define CONF_FILEPATH "./server.conf"
-#define MAXLINE 208
 
 typedef struct {
     int conf_count;

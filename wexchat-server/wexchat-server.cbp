@@ -32,6 +32,13 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="cJSON.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="tools/" />
+		</Unit>
+		<Unit filename="cJSON.h">
+			<Option virtualFolder="tools/" />
+		</Unit>
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 			<Option virtualFolder="server/" />
@@ -42,6 +49,16 @@
 		</Unit>
 		<Unit filename="threadpool.h">
 			<Option virtualFolder="tools/" />
+		</Unit>
+		<Unit filename="wex_data_constraints.h">
+			<Option virtualFolder="data/" />
+		</Unit>
+		<Unit filename="wex_entity.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="data/" />
+		</Unit>
+		<Unit filename="wex_entity.h">
+			<Option virtualFolder="data/" />
 		</Unit>
 		<Unit filename="wex_hashmap.c">
 			<Option compilerVar="CC" />

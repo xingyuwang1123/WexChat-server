@@ -1,0 +1,8 @@
+#ifndef WEX_DATA_CONSTRAINTS_H_INCLUDED
+#define WEX_DATA_CONSTRAINTS_H_INCLUDED
+
+//define some data cnostraints here
+
+#define MAX_SHORT_STRING_LENGTH 128
+
+#endif // WEX_DATA_CONSTRAINTS_H_INCLUDED

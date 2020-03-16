@@ -1,4 +1,5 @@
 #include "wex_unixconf.h"
+#include "wex_data_constraints.h"
 
 #include <unistd.h>
 #include <stdio.h>
@@ -51,25 +52,25 @@ wex_confres_t *wex_loadconf(const char *filepath, wex_conf_type type) {
     res->conf_count = 0;
     res->conf_map = shashmap_init(hashcode_str, equals_str);
     int fd = -1;
-    char buf[MAXLINE];
+    char buf[MAX_SHORT_STRING_LENGTH];
     ssize_t n;
     if ((fd = open(filepath, O_RDONLY | O_CLOEXEC)) < 0) {
         //perror("open");
         //exit(-1);
         wexlog(wex_log_error_with_perror, "open");
     }
-    while((n = readline(fd, buf, MAXLINE)) > 0) {
+    while((n = readline(fd, buf, MAX_SHORT_STRING_LENGTH)) > 0) {
         //skip #
         if(buf[0] == '#' || buf[0] == '\n' || buf[0] == '\r') {
             continue;
         }
-        char *namebuf = malloc(sizeof(char) * (MAXLINE/2));
-        char *attrbuf = malloc(sizeof(char) * (MAXLINE/2));
+        char *namebuf = malloc(sizeof(char) * (MAX_SHORT_STRING_LENGTH/2));
+        char *attrbuf = malloc(sizeof(char) * (MAX_SHORT_STRING_LENGTH/2));
         char *token = strtok(buf, "=");
         if (token != NULL) {
         //if second attr exists , put them into queue
-            strncpy(namebuf, token, MAXLINE/2);
-            strncpy(attrbuf, strtok(NULL, "="), MAXLINE/2);\
+            strncpy(namebuf, token, MAX_SHORT_STRING_LENGTH/2);
+            strncpy(attrbuf, strtok(NULL, "="), MAX_SHORT_STRING_LENGTH/2);\
             shashmap_put(res->conf_map, namebuf, attrbuf);
         }
         else {
