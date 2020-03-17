@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "wex_server.h"
 #include "wexlog.h"
-
+//
 //int main(int argc, char *argv[])
 //{
 //    int listenfd = wex_init_server();
@@ -19,6 +19,6 @@
 
 
 //test cjson
-int main () {
-    return 0;
-}
+//int main () {
+//    return 0;
+//}

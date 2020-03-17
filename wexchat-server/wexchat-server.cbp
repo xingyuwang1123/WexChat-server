@@ -81,6 +81,13 @@
 		<Unit filename="wex_neo4j_connctor.h">
 			<Option virtualFolder="tools/" />
 		</Unit>
+		<Unit filename="wex_protocol_parser.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="server/" />
+		</Unit>
+		<Unit filename="wex_protocol_parser.h">
+			<Option virtualFolder="server/" />
+		</Unit>
 		<Unit filename="wex_server.c">
 			<Option compilerVar="CC" />
 			<Option virtualFolder="server/" />

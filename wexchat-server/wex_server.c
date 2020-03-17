@@ -93,13 +93,31 @@ void wex_run_server(int listenfd) {
 
 void str_echo(void *sockfd) {
     ssize_t len;
-    char buf[1024];
+    char buf[NETWORK_BUFF_SIZE];
     int sockfd2 = *((int *)sockfd);
-
+    //false represents that socket can accept request, or it is reading content
+    bool reading = false;
 again:
-    while((len = read(sockfd2, buf, 1024)) > 0) {
+    while((len = read(sockfd2, buf, NETWORK_BUFF_SIZE)) > 0) {
         //do here
-        write(sockfd2, buf, len);
+        //write(sockfd2, buf, len);
+        if (reading == false) {
+            //get header
+            char *head = strtok(buf, " ");
+            if (!strcmp(head, "REQ")) {
+                //request
+                wexlog(wex_log_debug, "req accepted");
+            }
+            else if (!strcmp(head, "ALIVE")) {
+                //alive request
+                wexlog(wex_log_debug, "alive accepted");
+            }
+            else {
+                //error
+                char *error = WEX_ERROR_MSG1;
+                write(sockfd2, error, strlen(error));
+            }
+        }
     }
     //reentered error
     if (len < 0 && errno == EINTR)

@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1584187474 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_server.c
+1584428731 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_server.c
 	"wex_server.h"
 	<stdio.h>
 	<stdlib.h>
@@ -14,14 +14,15 @@
 	"threadpool.h"
 	"wex_neo4j_connctor.h"
 
-1584371314 source:/home/sca/Documents/WexChat-server/wexchat-server/main.c
+1584432362 source:/home/sca/Documents/WexChat-server/wexchat-server/main.c
 	<stdio.h>
 	<stdlib.h>
 	"wex_server.h"
 	"wexlog.h"
 
-1584160436 /home/sca/Documents/WexChat-server/wexchat-server/wex_server.h
+1584429354 /home/sca/Documents/WexChat-server/wexchat-server/wex_server.h
 	"wex_unixconf.h"
+	"wex_protocol_parser.h"
 
 1583994473 source:/home/sca/Documents/WexChat-server/wexchat-server/threadpool.c
 	<stdlib.h>
@@ -31,8 +32,9 @@
 
 1583989013 /home/sca/Documents/WexChat-server/wexchat-server/threadpool.h
 
-1584187502 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_unixconf.c
+1584373331 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_unixconf.c
 	"wex_unixconf.h"
+	"wex_data_constraints.h"
 	<unistd.h>
 	<stdio.h>
 	<stdlib.h>
@@ -51,7 +53,7 @@
 
 1583992408 /home/sca/Documents/WexChat-server/wexchat-server/wex_hashmap.h
 
-1584373281 /home/sca/Documents/WexChat-server/wexchat-server/wex_unixconf.h
+1584427311 /home/sca/Documents/WexChat-server/wexchat-server/wex_unixconf.h
 	"wex_hashmap.h"
 
 1584001029 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_list.c
@@ -89,9 +91,22 @@
 
 1423853601 /home/sca/Documents/WexChat-server/wexchat-server/cJSON.h
 
-1584373337 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_entity.c
+1584373503 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_entity.c
 	"wex_entity.h"
+	"wex_data_constraints.h"
 	<stdlib.h>
 
 1584372894 /home/sca/Documents/WexChat-server/wexchat-server/wex_entity.h
+
+1584436206 /home/sca/Documents/WexChat-server/wexchat-server/wex_data_constraints.h
+
+1584436606 /home/sca/Documents/WexChat-server/wexchat-server/wex_protocol_parser.h
+	"wex_data_constraints.h"
+	<stdint.h>
+	<stdio.h>
+
+1584434887 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_protocol_parser.c
+	"wex_protocol_parser.h"
+	<string.h>
+	<stdlib.h>
 

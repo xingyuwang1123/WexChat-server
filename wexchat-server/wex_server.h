@@ -2,6 +2,9 @@
 #define WEX_SERVER_H_INCLUDED
 
 #include "wex_unixconf.h"
+#include "wex_protocol_parser.h"
+
+
 
 static wex_confres_t *wex_conf;
 
@@ -18,6 +21,8 @@ void wex_run_server(int listenfd);
 void str_echo(void *sockfd);
 
 void wex_quit_server(void);
+
+
 
 
 #endif // WEX_SERVER_H_INCLUDED
