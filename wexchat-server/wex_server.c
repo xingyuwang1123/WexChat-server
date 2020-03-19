@@ -94,30 +94,98 @@ void wex_run_server(int listenfd) {
 void str_echo(void *sockfd) {
     ssize_t len;
     char buf[NETWORK_BUFF_SIZE];
+    char *bufptr = buf;
+    bool reset_flag = false;
     int sockfd2 = *((int *)sockfd);
+    wex_protocol_request *req;
     //false represents that socket can accept request, or it is reading content
     bool reading = false;
+    size_t resting = 0;
 again:
     while((len = read(sockfd2, buf, NETWORK_BUFF_SIZE)) > 0) {
         //do here
         //write(sockfd2, buf, len);
-        if (reading == false) {
+ again2:  if (reading == false) {
             //get header
-            char *head = strtok(buf, " ");
+            char *head = strtok(bufptr, " ");
             if (!strcmp(head, "REQ")) {
                 //request
                 wexlog(wex_log_debug, "req accepted");
+                //build a req stuct
+                head = head + strlen(head) + 1;
+                req = wex_parse_request(head, NETWORK_BUFF_SIZE - 4, 0, NULL);
+                if (req == NULL) {
+                    goto kerror;
+                }
+                //read full content
+                size_t readlen = strlen(req->content);
+                if (readlen < req->msg_length) {
+                    reading = true;
+                    resting = req->msg_length - readlen;
+                    memset(buf, 0, NETWORK_BUFF_SIZE);
+                    continue;
+                }
+                //hand it it logic layer
+                wexlog(wex_log_debug, "req read ok");
             }
             else if (!strcmp(head, "ALIVE")) {
                 //alive request
                 wexlog(wex_log_debug, "alive accepted");
+                write(sockfd2, "ALIVE \n", 5);
+                memset(buf, 0, NETWORK_BUFF_SIZE);
+                continue;
             }
             else {
                 //error
+kerror :        wexlog(wex_log_debug, "error occured in reading");
                 char *error = WEX_ERROR_MSG1;
                 write(sockfd2, error, strlen(error));
+                memset(buf, 0, NETWORK_BUFF_SIZE);
+                continue;
+            }
+            if (reset_flag == true) {
+                bufptr = buf;
+                reset_flag = false;
             }
         }
+        else {
+            //read resting content
+            if (len = resting) {
+                //all packages have been read
+                wex_parse_request(buf, resting, 1, req);
+                reading = false;
+                resting = 0;
+                memset(buf, 0, NETWORK_BUFF_SIZE);
+                continue;
+            }
+            else if (len > resting) {
+                //occur package stick
+                wex_parse_request(buf, resting, 1, req);
+                reading = false;
+                bufptr += resting;
+                len -=resting;
+                resting = 0;
+                reset_flag = true;
+                goto again2;
+            }
+            else {
+                wex_parse_request(buf, resting, 1, req);
+                resting = resting - len;
+                memset(buf, 0, NETWORK_BUFF_SIZE);
+                continue;
+            }
+        }
+        wex_free_request(req);
+        //response
+        char *contentres = malloc(sizeof(char) * 256);
+        strcpy(contentres, "response response \n");
+        wex_protocol_response *res = wex_construct_response("00", "WEX", "1.0", strlen(contentres), contentres, 256);
+        char resbuf[NETWORK_BUFF_SIZE];
+        wex_deparse_response(res, resbuf, NETWORK_BUFF_SIZE);
+        wex_free_response(res);
+        write(sockfd2, resbuf, NETWORK_BUFF_SIZE);
+        wexlog(wex_log_debug, "written");
+        memset(buf, 0, NETWORK_BUFF_SIZE);
     }
     //reentered error
     if (len < 0 && errno == EINTR)

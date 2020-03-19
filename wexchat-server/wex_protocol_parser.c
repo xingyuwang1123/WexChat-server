@@ -65,7 +65,7 @@ wex_protocol_response *wex_construct_response(const char *code, const char *pro_
     strncpy(res->code, code, MAX_CODE_LENGTH);
     strncpy(res->pro_name, pro_name, MAX_PRONAME_LENGTH);
     strncpy(res->version, version, MAX_VERSIONONAME_LENGTH);
-    res->content_length = length;
+    res->msg_length = length;
     res->content = content;
     res->content_length = content_length;
     return res;
@@ -109,12 +109,20 @@ int wex_deparse_response(wex_protocol_response *res, char *buf, size_t buf_size)
 
 
 //test cjson
-int main () {
-    wex_protocol_request *req = wex_parse_request("Method WEX/1.0 12 \n{asdasdasdafadewfffdsfsdcvsdzfc}", 0, 0,NULL);
-    printf("%s,%s,%s,%d,%s\n", req->method_name, req->pro_name, req->version, req->msg_length, req->content);
-    char *buf = "asdasfdsfvsv.....aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    wex_parse_request(buf, strlen(buf), 1, req);
-    printf("%s,%s,%s,%d,%s\n", req->method_name, req->pro_name, req->version, req->msg_length, req->content);
-
-    return 0;
-}
+//int main () {
+//    wex_protocol_request *req = wex_parse_request("Method WEX/1.0 12 \n{asdasdasdafadewfffdsfsdcvsdzfc}", 0, 0,NULL);
+//    printf("%s,%s,%s,%d,%s\n", req->method_name, req->pro_name, req->version, req->msg_length, req->content);
+//    char *buf = "asdasfdsfvsv.....aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+//    wex_parse_request(buf, strlen(buf), 1, req);
+//    printf("%s,%s,%s,%d,%s\n", req->method_name, req->pro_name, req->version, req->msg_length, req->content);
+//    char *content = malloc(sizeof(char) * 128);
+//    strncpy(content, "content", 128);
+//    wex_protocol_response *res = wex_construct_response("00", "WEX", "1.0", 7, content, 128);
+//    char buf2[NETWORK_BUFF_SIZE];
+//    wex_deparse_response(res, buf2, NETWORK_BUFF_SIZE);
+//    printf("%s", buf2);
+//    //printf("%s\n", wex_deparse_response(res, ))
+//    wex_free_request(req);
+//    wex_free_response(res);
+//    return 0;
+//}

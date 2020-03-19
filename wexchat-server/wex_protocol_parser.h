@@ -34,8 +34,14 @@ return NULL if failed
 */
 wex_protocol_request *wex_parse_request(char *buf, ssize_t len, int flag, wex_protocol_request *creq);
 
+/*
+length is content's string length, and contentlength is content's buf size , please alloc memory first, ti may be realloced in function.
+*/
 wex_protocol_response *wex_construct_response(const char *code, const char *pro_name, const char *version, uint16_t length, char *content, size_t content_length);
 
+/*
+=translate response into buf string.
+*/
 int wex_deparse_response(wex_protocol_response *res, char *buf, size_t buf_size);
 
 void wex_free_request(wex_protocol_request *req);
