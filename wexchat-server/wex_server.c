@@ -11,6 +11,7 @@
 #include "wexlog.h"
 #include "threadpool.h"
 #include "wex_neo4j_connctor.h"
+#include "wex_logic_interface.h"
 
 static threadpool_t *wex_pool;
 
@@ -62,7 +63,7 @@ int wex_init_server(void) {
     char *pass = shashmap_get(wex_conf->conf_map, "DB_PASSWORD");
     ret = wex_neo4j_connect_to_server(address, kport, username, pass);
     if (ret < 0) {
-        wexlog(wex_log_error_with_perror, "connect to neo4j");
+        wexlog(wex_log_error_with_perror, "disconnect to neo4j");
     }
     return listenfd;
 }
@@ -175,16 +176,18 @@ kerror :        wexlog(wex_log_debug, "error occured in reading");
                 continue;
             }
         }
+        //get response from logic layer
+        char *contentres = wex_logic_doenter(req->method_name, req->content, req->msg_length);
         wex_free_request(req);
         //response
-        char *contentres = malloc(sizeof(char) * 256);
-        strcpy(contentres, "response response \n");
+//        char *contentres = malloc(sizeof(char) * 256);
+//        strcpy(contentres, "response response \n");
         wex_protocol_response *res = wex_construct_response("00", "WEX", "1.0", strlen(contentres), contentres, 256);
-        char resbuf[NETWORK_BUFF_SIZE];
+        char *resbuf = malloc(sizeof(char) * NETWORK_BUFF_SIZE);
         wex_deparse_response(res, resbuf, NETWORK_BUFF_SIZE);
-        wex_free_response(res);
-        write(sockfd2, resbuf, NETWORK_BUFF_SIZE);
+        write(sockfd2, resbuf, strlen(resbuf));
         wexlog(wex_log_debug, "written");
+        wex_free_response(res);
         memset(buf, 0, NETWORK_BUFF_SIZE);
     }
     //reentered error

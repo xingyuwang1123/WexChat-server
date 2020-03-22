@@ -74,6 +74,13 @@
 		<Unit filename="wex_list.h">
 			<Option virtualFolder="tools/" />
 		</Unit>
+		<Unit filename="wex_logic_interface.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="logic/" />
+		</Unit>
+		<Unit filename="wex_logic_interface.h">
+			<Option virtualFolder="logic/" />
+		</Unit>
 		<Unit filename="wex_neo4j_connctor.c">
 			<Option compilerVar="CC" />
 			<Option virtualFolder="tools/" />

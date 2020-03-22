@@ -104,7 +104,7 @@ int wex_deparse_response(wex_protocol_response *res, char *buf, size_t buf_size)
         buf_size = buf_size * 2;
     }
     strncat(buf, res->content, res->msg_length);
-    return 0;
+    return slen;
 }
 
 
