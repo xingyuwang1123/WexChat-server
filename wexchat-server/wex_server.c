@@ -89,6 +89,9 @@ void wex_run_server(int listenfd) {
             wexlog(wex_log_warning, "wrong in adding thread to threadpool");
             close(connfd);
         }
+        else {
+            wexlog(wex_log_debug, "someone connected");
+        }
     }
 }
 
@@ -104,6 +107,7 @@ void str_echo(void *sockfd) {
     size_t resting = 0;
 again:
     while((len = read(sockfd2, buf, NETWORK_BUFF_SIZE)) > 0) {
+        wexlog(wex_log_debug, buf);
         //do here
         //write(sockfd2, buf, len);
  again2:  if (reading == false) {

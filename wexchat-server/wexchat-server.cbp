@@ -50,6 +50,10 @@
 		<Unit filename="threadpool.h">
 			<Option virtualFolder="tools/" />
 		</Unit>
+		<Unit filename="wec_query.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="data/" />
+		</Unit>
 		<Unit filename="wex_data_constraints.h">
 			<Option virtualFolder="data/" />
 		</Unit>
@@ -81,6 +85,13 @@
 		<Unit filename="wex_logic_interface.h">
 			<Option virtualFolder="logic/" />
 		</Unit>
+		<Unit filename="wex_logic_user.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="logic/" />
+		</Unit>
+		<Unit filename="wex_logic_user.h">
+			<Option virtualFolder="logic/" />
+		</Unit>
 		<Unit filename="wex_neo4j_connctor.c">
 			<Option compilerVar="CC" />
 			<Option virtualFolder="tools/" />
@@ -94,6 +105,9 @@
 		</Unit>
 		<Unit filename="wex_protocol_parser.h">
 			<Option virtualFolder="server/" />
+		</Unit>
+		<Unit filename="wex_query.h">
+			<Option virtualFolder="data/" />
 		</Unit>
 		<Unit filename="wex_server.c">
 			<Option compilerVar="CC" />

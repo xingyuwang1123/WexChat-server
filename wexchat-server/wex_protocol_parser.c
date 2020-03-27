@@ -34,10 +34,13 @@ wex_protocol_request *wex_parse_request(char *buf, ssize_t len, int flag, wex_pr
             req->msg_length = length;
         }
         else {goto error;}
-        if ((token = strtok(NULL, " ")) != NULL) {
-           if (*token != '\n') {goto error;}
+//        if ((token = strtok(NULL, " ")) != NULL) {
+//           if (*token != '\n') {goto error;}
+//        }
+//        else {goto error;}
+        while(*token != '\n') {
+            token++;
         }
-        else {goto error;}
         //content
         req->content = malloc(sizeof(char) * ORIGINAL_CONTENT_LENGTH);
         strncpy(req->content, token + 1, ORIGINAL_CONTENT_LENGTH);

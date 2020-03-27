@@ -3,7 +3,7 @@
 
 #include <neo4j-client.h>
 
-typedef void* (*wex_result_parser)(neo4j_result_stream_t *results);
+typedef void (*wex_result_parser)(neo4j_result_stream_t *results, void *res);
 
 /*
 connect to neo4j server,return negative number if failed

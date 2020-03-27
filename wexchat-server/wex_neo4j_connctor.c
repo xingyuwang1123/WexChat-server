@@ -47,8 +47,7 @@ int wex_neo4j_do_query_with_result(const char *query, void *result, wex_result_p
         return -1;
     }
     //do here
-    void *res = parser(results);
-    result = res;
+    parser(results, result);
     neo4j_close_results(results);
     return 0;
 }
