@@ -5,7 +5,10 @@
 
 int login_processer(char *content, size_t length, char *res, size_t res_length);
 
-int register_processer();
+int register_processer(char *content, size_t length, char *res, size_t res_length);
 
+int getheadername_processer(char *content, size_t length, char *res, size_t res_length);
+
+int getalluserinfo_processer(char *content, size_t length, char *res, size_t res_length);
 
 #endif

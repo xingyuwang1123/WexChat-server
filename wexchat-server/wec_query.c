@@ -2,7 +2,14 @@
 #include "wex_neo4j_connctor.h"
 #include "wex_query.h"
 #include "wexlog.h"
+#include "wex_data_constraints.h"
 
+
+struct midway1{
+    char *name;
+    char *header;
+};
+//parser here
 void login_parser(neo4j_result_stream_t *results, void *result) {
     unsigned int count = neo4j_nfields(results);
     int *result2 = (int *)result;
@@ -15,6 +22,83 @@ void login_parser(neo4j_result_stream_t *results, void *result) {
     *result2 = neo4j_int_value(value);
 }
 
+
+void id_by_username_parser(neo4j_result_stream_t *results, void *result) {
+    char *result2 = (char *)result;
+    neo4j_result_t *res = neo4j_fetch_next(results);
+    if (result == NULL) {
+        wexlog(wex_log_warning, "failed to fetch result");
+        return;
+    }
+    neo4j_value_t value = neo4j_result_field(res, 0);
+    int ivalue = neo4j_int_value(value);
+    sprintf(result2, "%d", ivalue);
+}
+
+void getheadername_parser(neo4j_result_stream_t *results, void *result) {
+    struct midway1 *result2 = (struct midway1 *)result;
+    neo4j_result_t *res = neo4j_fetch_next(results);
+    if (result == NULL) {
+        wexlog(wex_log_warning, "failed to fetch result");
+        return;
+    }
+    neo4j_value_t value = neo4j_result_field(res, 0);
+    neo4j_value_t value2 = neo4j_result_field(res, 1);
+    char temp[MAX_SHORT_STRING_LENGTH];
+    neo4j_string_value(value, temp, MAX_SHORT_STRING_LENGTH);
+    strncpy(result2->header, temp, MAX_SHORT_STRING_LENGTH);
+    neo4j_string_value(value2, temp, MAX_SHORT_STRING_LENGTH);
+    strncpy(result2->name, temp, MAX_SHORT_STRING_LENGTH);
+}
+
+void getalluserinfo_parser(neo4j_result_stream_t *results, void *result) {
+    wex_entity_user *user = (wex_entity_user *)result;
+    neo4j_result_t *res = neo4j_fetch_next(results);
+    if (result == NULL) {
+        wexlog(wex_log_warning, "failed to fetch result");
+        return;
+    }
+    neo4j_value_t username_value = neo4j_result_field(res, 0);
+    neo4j_value_t nickname_value = neo4j_result_field(res, 1);
+    neo4j_value_t header_value = neo4j_result_field(res, 2);
+    neo4j_value_t birthtime_value = neo4j_result_field(res, 3);
+    neo4j_value_t introduction_value = neo4j_result_field(res, 4);
+    neo4j_value_t mail_value = neo4j_result_field(res, 5);
+    neo4j_value_t number_value = neo4j_result_field(res, 6);
+    neo4j_value_t address_p_value = neo4j_result_field(res, 7);
+    neo4j_value_t address_c_value = neo4j_result_field(res, 8);
+    neo4j_value_t note_value = neo4j_result_field(res, 9);
+    neo4j_value_t created_at_value = neo4j_result_field(res, 10);
+    neo4j_value_t cutin_value = neo4j_result_field(res, 11);
+    //insert
+    if (user != NULL) {
+        char temp[MAX_SHORT_STRING_LENGTH];
+        neo4j_string_value(username_value, temp, MAX_SHORT_STRING_LENGTH);
+        strncpy(user->username, temp, MAX_SHORT_STRING_LENGTH);
+        neo4j_string_value(nickname_value, temp, MAX_SHORT_STRING_LENGTH);
+        strncpy(user->nickname, temp, MAX_SHORT_STRING_LENGTH);
+        neo4j_string_value(header_value, temp, MAX_SHORT_STRING_LENGTH);
+        strncpy(user->header, temp, MAX_SHORT_STRING_LENGTH);
+        user->birthtime = neo4j_int_value(birthtime_value);
+        neo4j_string_value(introduction_value, temp, MAX_SHORT_STRING_LENGTH);
+        strncpy(user->introduction, temp, MAX_SHORT_STRING_LENGTH);
+        neo4j_string_value(mail_value, temp, MAX_SHORT_STRING_LENGTH);
+        strncpy(user->email, temp, MAX_SHORT_STRING_LENGTH);
+        neo4j_string_value(number_value, temp, MAX_SHORT_STRING_LENGTH);
+        strncpy(user->phone_number, temp, MAX_SHORT_STRING_LENGTH);
+        neo4j_string_value(address_p_value, temp, MAX_SHORT_STRING_LENGTH);
+        strncpy(user->address_p, temp, MAX_SHORT_STRING_LENGTH);
+        neo4j_string_value(address_c_value, temp, MAX_SHORT_STRING_LENGTH);
+        strncpy(user->address_c, temp, MAX_SHORT_STRING_LENGTH);
+        neo4j_string_value(note_value, temp, MAX_SHORT_STRING_LENGTH);
+        strncpy(user->note, temp, MAX_SHORT_STRING_LENGTH);
+        user->created_at = neo4j_int_value(created_at_value);
+        neo4j_string_value(cutin_value, temp, MAX_SHORT_STRING_LENGTH);
+        strncpy(user->cutin, temp, MAX_SHORT_STRING_LENGTH);
+    }
+}
+
+//query here
 int register_query(wex_entity_user *user) {
     char statement[256];
     statement[0] = '\0';
@@ -32,6 +116,45 @@ int login_query(const char *username, const char *password, int *res) {
     statement[0] = '\0';
     sprintf(statement, "match (n:User {username:'%s',password:'%s'}) return count(n)", username, password);
     int ret = wex_neo4j_do_query_with_result(statement, res, &login_parser);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
+
+int query_id_by_username(const char *username, const char *password, char *res) {
+    char statement[256];
+    statement[0] = '\0';
+    sprintf(statement, "match (n:User {username:'%s',password:'%s'}) return id(n)", username, password);
+    int ret = wex_neo4j_do_query_with_result(statement, res, &id_by_username_parser);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
+
+int query_headername_by_uid(const char *uid, char *header, char *name) {
+    char statement[256];
+    statement[0] = '\0';
+    sprintf(statement, "match (n:User) where id(n)=%s return n.header, n.nickname", uid);
+    struct midway1 midway1;
+    midway1.name = name;
+    midway1.header = header;
+    int ret = wex_neo4j_do_query_with_result(statement, &midway1, &getheadername_parser);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
+
+int query_alluserinfo_by_uid(const char *uid, wex_entity_user *user) {
+    char statement[256];
+    statement[0] = '\0';
+    sprintf(statement, "match (n:User) where id(n)=%s return n.username,n.nickname,n.header,n.birthtime, n.introduction, n.email, n.phone_number, n.address_p, n.address_c, n.note,n.created_at, n.cutin", uid);
+    int ret = wex_neo4j_do_query_with_result(statement, user, &getalluserinfo_parser);
     if (ret < 0) {
         wexlog(wex_log_warning, "query:error  in querying neo4j");
         return -1;
