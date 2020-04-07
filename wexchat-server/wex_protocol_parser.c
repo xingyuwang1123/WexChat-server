@@ -38,12 +38,11 @@ wex_protocol_request *wex_parse_request(char *buf, ssize_t len, int flag, wex_pr
 //           if (*token != '\n') {goto error;}
 //        }
 //        else {goto error;}
-        while(*token != '\n') {
-            token++;
-        }
+
         //content
         req->content = malloc(sizeof(char) * ORIGINAL_CONTENT_LENGTH);
-        strncpy(req->content, token + 1, ORIGINAL_CONTENT_LENGTH);
+        //strncpy(req->content, token + 1, ORIGINAL_CONTENT_LENGTH);
+        req->content[0] = '\0';
         req->content_length = ORIGINAL_CONTENT_LENGTH;
         return req;
 error:
@@ -107,7 +106,7 @@ int wex_deparse_response(wex_protocol_response *res, char *buf, size_t buf_size)
         buf_size = buf_size * 2;
     }
     strncat(buf, res->content, res->msg_length);
-    return slen;
+    return strlen(buf);
 }
 
 

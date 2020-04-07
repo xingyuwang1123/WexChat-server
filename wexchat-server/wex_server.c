@@ -95,6 +95,41 @@ void wex_run_server(int listenfd) {
     }
 }
 
+ssize_t wex_readline(int fd, void *vptr, ssize_t maxlen)
+{
+	ssize_t n, rc;
+	char c, *ptr;
+
+	ptr = vptr;
+	for (n = 1; n < maxlen; n++)
+	{
+		again:
+		if ((rc = read(fd, &c, 1)) == 1)
+		{
+			*ptr++ = c;
+			if (c == '\n') {
+                *(ptr-1) = '\0';
+                break;
+			}
+
+		}
+		else if (rc == 0)
+		{
+			*ptr = 0;
+			return(n - 1);
+		}
+		else
+		{
+			if (errno == EINTR)
+				goto again;
+			return(-1);
+		}
+	}
+	*ptr = 0;
+	return(n);
+}
+
+
 void str_echo(void *sockfd) {
     ssize_t len;
     char buf[NETWORK_BUFF_SIZE];
@@ -102,100 +137,65 @@ void str_echo(void *sockfd) {
     bool reset_flag = false;
     int sockfd2 = *((int *)sockfd);
     wex_protocol_request *req;
+    char header_buf[MAX_HEADER_LENGTH];
     //false represents that socket can accept request, or it is reading content
     bool reading = false;
     size_t resting = 0;
-again:
-    while((len = read(sockfd2, buf, NETWORK_BUFF_SIZE)) > 0) {
-        wexlog(wex_log_debug, buf);
-        //do here
-        //write(sockfd2, buf, len);
- again2:  if (reading == false) {
-            //get header
-            char *head = strtok(bufptr, " ");
-            if (!strcmp(head, "REQ")) {
-                //request
-                wexlog(wex_log_debug, "req accepted");
-                //build a req stuct
-                head = head + strlen(head) + 1;
-                req = wex_parse_request(head, NETWORK_BUFF_SIZE - 4, 0, NULL);
-                if (req == NULL) {
-                    goto kerror;
+
+ again:   while(1) {
+        //read header
+        len = wex_readline(sockfd2, header_buf, MAX_HEADER_LENGTH);
+        wexlog(wex_log_debug, "header:");
+        wexlog(wex_log_debug, header_buf);
+        if (len <= 0) goto error;
+        char *token = strtok(header_buf, " ");
+        if (!strcmp(token, "ALIVE")) {
+            char *msg = "ALIVE \n";
+            write(sockfd2, msg, strlen(msg));
+            continue;
+        }
+        else if (!strcmp(token, "REQ")) {
+            req = wex_parse_request(header_buf + 4, MAX_HEADER_LENGTH - 4, 0, NULL);
+            if (req == NULL) {
+                wexlog(wex_log_warning, "bad request");
+                char *msg = WEX_ERROR_MSG1;
+                write(sockfd2, msg, strlen(msg));
+                continue;
+            }
+            //read resting
+            if (req->msg_length != 0) {
+                resting = req->msg_length;
+                while(resting > 0) {
+                    if (resting > NETWORK_BUFF_SIZE)
+                        len = read(sockfd2, buf, NETWORK_BUFF_SIZE);
+                    else
+                        len = read(sockfd2, buf, resting);
+                    if (len <= 0) goto error;
+                    wexlog(wex_log_debug, "body:");
+                    wexlog(wex_log_debug, buf);
+                    resting -= len;
+                    wex_parse_request(buf, len, 1, req);
                 }
-                //read full content
-                size_t readlen = strlen(req->content);
-                if (readlen < req->msg_length) {
-                    reading = true;
-                    resting = req->msg_length - readlen;
-                    memset(buf, 0, NETWORK_BUFF_SIZE);
+                if (resting != 0) {
+                    wexlog(wex_log_warning, "error in reading content");
                     continue;
                 }
-                //hand it it logic layer
-                wexlog(wex_log_debug, "req read ok");
             }
-            else if (!strcmp(head, "ALIVE")) {
-                //alive request
-                wexlog(wex_log_debug, "alive accepted");
-                write(sockfd2, "ALIVE \n", 5);
-                memset(buf, 0, NETWORK_BUFF_SIZE);
-                continue;
-            }
-            else {
-                //error
-kerror :        wexlog(wex_log_debug, "error occured in reading");
-                char *error = WEX_ERROR_MSG1;
-                write(sockfd2, error, strlen(error));
-                memset(buf, 0, NETWORK_BUFF_SIZE);
-                continue;
-            }
-            if (reset_flag == true) {
-                bufptr = buf;
-                reset_flag = false;
-            }
+            //do response
+            char *res = wex_logic_doenter(req->method_name, req->content, req->msg_length);
+            wex_free_request(req);
+            wex_protocol_response *response = wex_construct_response("00", "WEX", "1.0", strlen(res), res, 0);
+            char *writebuf = malloc(sizeof(char) * ORIGINAL_CONTENT_LENGTH);
+            int slen = wex_deparse_response(response, writebuf, ORIGINAL_CONTENT_LENGTH);
+            write(sockfd2, writebuf, slen);
+            free(writebuf);
+            wex_free_response(response);
         }
-        else {
-            //read resting content
-            if (len = resting) {
-                //all packages have been read
-                wex_parse_request(buf, resting, 1, req);
-                reading = false;
-                resting = 0;
-                memset(buf, 0, NETWORK_BUFF_SIZE);
-                continue;
-            }
-            else if (len > resting) {
-                //occur package stick
-                wex_parse_request(buf, resting, 1, req);
-                reading = false;
-                bufptr += resting;
-                len -=resting;
-                resting = 0;
-                reset_flag = true;
-                goto again2;
-            }
-            else {
-                wex_parse_request(buf, resting, 1, req);
-                resting = resting - len;
-                memset(buf, 0, NETWORK_BUFF_SIZE);
-                continue;
-            }
-        }
-        //get response from logic layer
-        char *contentres = wex_logic_doenter(req->method_name, req->content, req->msg_length);
-        wex_free_request(req);
-        //response
-//        char *contentres = malloc(sizeof(char) * 256);
-//        strcpy(contentres, "response response \n");
-        wex_protocol_response *res = wex_construct_response("00", "WEX", "1.0", strlen(contentres), contentres, 256);
-        char *resbuf = malloc(sizeof(char) * NETWORK_BUFF_SIZE);
-        wex_deparse_response(res, resbuf, NETWORK_BUFF_SIZE);
-        write(sockfd2, resbuf, strlen(resbuf));
-        wexlog(wex_log_debug, "written");
-        wex_free_response(res);
-        memset(buf, 0, NETWORK_BUFF_SIZE);
+
+
     }
-    //reentered error
-    if (len < 0 && errno == EINTR)
+
+error:    if (len < 0 && errno == EINTR)
         goto again;
     else if (len < 0) {
         //printf("str_echo: read err\n");
@@ -209,6 +209,7 @@ kerror :        wexlog(wex_log_debug, "error occured in reading");
         //printf("ternimal closed");
         wexlog(wex_log_debug, "ternimal closed");
     }
+
 }
 
 void wex_quit_server(void) {

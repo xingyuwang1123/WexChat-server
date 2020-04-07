@@ -20,5 +20,8 @@ char *wex_logic_doenter(const char *method, char *content, size_t length) {
     else if (!strncmp(method, "getalluserinfo", MAX_METHODNAME_LENGTH)) {
         getalluserinfo_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
     }
+    else if (!strncmp(method, "updateinfobyuid", MAX_METHODNAME_LENGTH)) {
+        updateinfobyuid_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
+    }
     return res;
 }

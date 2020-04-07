@@ -11,4 +11,6 @@ int getheadername_processer(char *content, size_t length, char *res, size_t res_
 
 int getalluserinfo_processer(char *content, size_t length, char *res, size_t res_length);
 
+int updateinfobyuid_processer(char *content, size_t length, char *res, size_t res_length);
+
 #endif

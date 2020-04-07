@@ -8,6 +8,7 @@ here we define some data entity to transport data
 
 //ex:
 typedef struct {
+    char *uid;
     char *username;
     char *password;
     char *nickname;

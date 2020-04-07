@@ -132,6 +132,44 @@ int getheadername_processer(char *content, size_t length, char *res, size_t res_
     return 0;
  }
 
+ int updateinfobyuid_processer(char *content, size_t length, char *res, size_t res_length) {
+    char uid[MAX_UID_LENGTH];
+    strncpy(uid, content, MAX_UID_LENGTH);
+    wex_entity_user *user = wex_entity_user_alloc();
+    cJSON *json = cJSON_Parse(content);
+    if (json == NULL) {
+        wexlog(wex_log_warning, "error in parsing json");
+        return -1;
+    }
+    cJSON *uidj = cJSON_GetObjectItem(json, "uid");
+    cJSON *nicknamej = cJSON_GetObjectItem(json, "nickname");
+    cJSON *birthtimej = cJSON_GetObjectItem(json, "birthtime");
+    cJSON *mailj = cJSON_GetObjectItem(json, "mail");
+    cJSON *address_pj = cJSON_GetObjectItem(json, "address_p");
+    cJSON *address_cj = cJSON_GetObjectItem(json, "address_c");
+    cJSON *notej = cJSON_GetObjectItem(json, "note");
+    cJSON *introj = cJSON_GetObjectItem(json, "introduction");
+    strncpy(user->uid, uidj->valuestring, MAX_SHORT_STRING_LENGTH);
+    strncpy(user->nickname, nicknamej->valuestring, MAX_SHORT_STRING_LENGTH);
+    user->birthtime = birthtimej->valueint;
+    strncpy(user->email, mailj->valuestring, MAX_SHORT_STRING_LENGTH);
+    strncpy(user->address_p, address_pj->valuestring, MAX_SHORT_STRING_LENGTH);
+    strncpy(user->address_c, address_cj->valuestring, MAX_SHORT_STRING_LENGTH);
+    strncpy(user->note, notej->valuestring, MAX_SHORT_STRING_LENGTH);
+    strncpy(user->introduction, introj->valuestring, MAX_SHORT_STRING_LENGTH);
+    int ret = update_userinfo_by_uid(user);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "err in query");
+        strcpy(res, "failed");
+    }
+    else {
+        strcpy(res, "ok");
+    }
+    cJSON_Delete(json);
+    wex_entity_user_free(user);
+    return 0;
+ }
+
 
 
 

@@ -162,6 +162,18 @@ int query_alluserinfo_by_uid(const char *uid, wex_entity_user *user) {
     return 0;
 }
 
+int update_userinfo_by_uid(wex_entity_user *user) {
+    char statement[256];
+    statement[0] = '\0';
+    sprintf(statement, "match (n:User) where id(n)=%s set n.nickname='%s',n.birthtime=%d,n.email='%s',n.address_c = '%s',n.address_p='%s',n.note='%s',n.introduction='%s'", user->uid, user->nickname, user->birthtime, user->email, user->address_p, user->address_c, user->note, user->introduction);
+    int ret = wex_neo4j_do_query(statement);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
+
 //int main () {
 //    int ret = wex_neo4j_connect_to_server("127.0.0.1", "7687", "neo4j", "137730");
 //    if (ret < 0) {

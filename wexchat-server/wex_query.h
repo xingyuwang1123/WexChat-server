@@ -13,4 +13,6 @@ int query_headername_by_uid(const char *uid, char *header, char *name);
 
 int query_alluserinfo_by_uid(const char *uid, wex_entity_user *user);
 
+int update_userinfo_by_uid(wex_entity_user *user);
+
 #endif // WEX_QUERY_H_INCLUDED

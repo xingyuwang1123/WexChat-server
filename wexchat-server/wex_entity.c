@@ -4,6 +4,8 @@
 
 wex_entity_user *wex_entity_user_alloc() {
     wex_entity_user *res = malloc(sizeof(wex_entity_user));
+    res->uid = malloc(MAX_SHORT_STRING_LENGTH * sizeof(char));
+    res->uid[0] = '\0';
     res->username = malloc(MAX_SHORT_STRING_LENGTH * sizeof(char));
     res->username[0] = '\0';
     res->password = malloc(MAX_SHORT_STRING_LENGTH * sizeof(char));
@@ -33,6 +35,7 @@ wex_entity_user *wex_entity_user_alloc() {
 }
 
 void wex_entity_user_free(wex_entity_user *user) {
+    free(user->uid);
     free(user->username);
     free(user->password);
     free(user->address_c);
