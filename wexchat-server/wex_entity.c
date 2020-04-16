@@ -34,6 +34,18 @@ wex_entity_user *wex_entity_user_alloc() {
     return res;
 }
 
+wex_entity_frienditem *wex_entity_frienditem_alloc() {
+    wex_entity_frienditem *item = malloc(sizeof(wex_entity_frienditem));
+    item->uid = malloc(sizeof(char) * MAX_UID_LENGTH);
+    item->username = malloc(sizeof(char) * MAX_SHORT_STRING_LENGTH);
+    item->username[0] = '\0';
+    item->header = malloc(sizeof(char) * MAX_SHORT_STRING_LENGTH);
+    item->header[0] = '\0';
+    item->cutin = malloc(sizeof(char) * MAX_SHORT_STRING_LENGTH);
+    item->cutin[0] = '\0';
+    return item;
+}
+
 void wex_entity_user_free(wex_entity_user *user) {
     free(user->uid);
     free(user->username);
@@ -48,4 +60,12 @@ void wex_entity_user_free(wex_entity_user *user) {
     free(user->note);
     free(user->phone_number);
     free(user);
+}
+
+void wex_entity_frienditem_free(wex_entity_frienditem *frienditem) {
+    free(frienditem->uid);
+    free(frienditem->username);
+    free(frienditem->header);
+    free(frienditem->cutin);
+    free(frienditem);
 }

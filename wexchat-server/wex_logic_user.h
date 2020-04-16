@@ -13,4 +13,10 @@ int getalluserinfo_processer(char *content, size_t length, char *res, size_t res
 
 int updateinfobyuid_processer(char *content, size_t length, char *res, size_t res_length);
 
+int getcutinbyuid_processer(char *content, size_t length, char *res, size_t res_length);
+
+int getallfriendsbyuid_processer(char *content, size_t length, char *res, size_t res_length);
+
+int updatecutinbyuid_processer(char *content, size_t length, char *res, size_t res_length);
+
 #endif

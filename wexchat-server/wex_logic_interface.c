@@ -23,5 +23,14 @@ char *wex_logic_doenter(const char *method, char *content, size_t length) {
     else if (!strncmp(method, "updateinfobyuid", MAX_METHODNAME_LENGTH)) {
         updateinfobyuid_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
     }
+    else if (!strncmp(method, "getcutinbyuid", MAX_METHODNAME_LENGTH)) {
+        getcutinbyuid_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
+    }
+    else if (!strncmp(method, "getallfriendsbyuid", MAX_METHODNAME_LENGTH)) {
+        getallfriendsbyuid_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
+    }
+    else if (!strncmp(method, "updatecutinbyuid", MAX_METHODNAME_LENGTH)) {
+        updatecutinbyuid_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
+    }
     return res;
 }

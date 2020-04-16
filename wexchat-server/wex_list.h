@@ -1,137 +1,41 @@
 #ifndef WEX_LIST_H_INCLUDED
 #define WEX_LIST_H_INCLUDED
-
-
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-//typedef unsigned char uchar, byte, BYTE;
-//typedef unsigned short uint16, word_t, ushort;
-//typedef unsigned __int32 uint, uint32, dword_t, size_t;
-//typedef unsigned long    ulong;
-//typedef __int16 int16;
-//typedef __int32 int32;
-//typedef __int64 int64, longlong;
-//typedef    long    lresult;
-//typedef unsigned __int64 uint64, qword_t, ulonglong;
-#ifndef BOOL
-    typedef int     BOOL;
-    #define TRUE  1
-    #define FALSE 0
-#endif
 
-#ifndef RESULT
-    #define RESULT        lresult
-    #define _SUCCESS    0
-    #define _ERROR        -1
-#endif
-
-#ifndef IN
-#define IN
-#endif
-
-#ifndef OUT
-#define OUT
-#endif
-
-#ifndef INOUT
-#define INOUT
-#endif
-
-#ifndef OPTIONAL
-#define OPTIONAL
-#endif
-
-#define SIZE_BYTE    1
-#define SIZE_ACHAR    1
-#define SIZE_WCHAR    2
-#define SIZE_SHORT    2
-#define SIZE_INT    4
-#define SIZE_LONG    4
-#define SIZE_FLT    4
-#define SIZE_DBL    8
-#define SIZE_WORD    2
-#define SIZE_DWORD    4
-#define SIZE_QWORD    8
-#define SIZE_LINT    8
-#define SIZE_INT64    8
-#define SIZE_UUID    16
-
-
-typedef struct _listnode_t
+//创建一个结构体表示链表中的节点
+typedef struct node
 {
-    struct _listnode_t    *next;
-    union{
-        void*            data;
-        struct _list_t    *list;
-        const char        *str;
-        long            key;
-    };
-}listnode_t;
+	struct node *link;//指针域，注意这里类型是node，而不是T_NODE
+	void *var;//数据域
+}T_NODE;
 
-typedef struct _list_t
-{
-    size_t        size;    /* count of nodes */
-    listnode_t    *head;
-    listnode_t  *tail;
-}list_t, *list_p;
+typedef void (*var_deleter)(void *ptr);
 
-/* A prototype of callbacked function called by list_destroy(), NULL for no use. */
-typedef void(*pfcb_list_node_free)(listnode_t* node);
+//初始化一个链表，并将第一个值传入(有的实现头结点不插入数据,自己选择)
+T_NODE *list_init(void *var);
 
-/* An example of  node data function implemented by callee:
-void my_list_node_(listnode_t *node)
-{
-    (node->data);
-}
-*/
+void print_list(    T_NODE *list_head);
 
-/* Appends a node to a list */
-extern void
-list_append_node(list_t *in_list, listnode_t *in_node);
+//计算链表的长度
+int list_lenth(T_NODE *list_head);
 
-/* Removes the first node from a list and returns it */
-extern listnode_t*
-list_remove_head(list_t *in_list);
+//单个数据插入，尾插法
+int list_tail_insert(T_NODE *list_head,void *var);
 
-/* Removes all nodes but for list itself */
-extern void
-list_remove_all(list_t *in_list, pfcb_list_node_free pfunc /* NULL for no use or a key node */);
+//单个数据插入，头插法
+T_NODE *list_head_insert(T_NODE *list_head,void *var);
 
-/* Returns a copy of a list_t from heap */
-extern list_t*
-list_copy(list_t in_list);
+//指定位置插入,可以插入头，尾，或者头尾之间任意位置
+T_NODE *list_specific_insert(T_NODE *list_head,int location,void *var);
 
-/* Concatenates two lists into first list. NOT ing the second */
-extern void
-list_concat(list_t *first, list_t *second);
+//从链表头开始删除整个链表
+T_NODE *del_list(T_NODE *list_head, var_deleter deleter);
 
-/* Allocates a new listnode_t from heap. NO memory allocated for input node_data */
-extern listnode_t*
-list_node_create(void* node_data);
+//修改链表中的指定元素值
+void change_specific_var(T_NODE *list_head,void *old_var,void *new_var, var_deleter deleter);
 
-/* Allocates a new listnode_t with a key node type */
-extern listnode_t*
-list_key_create(long node_key);
-
-/* Allocates a empty list_t from heap */
-extern list_t*
-list_create();
-
-/* s in_list's all nodes and destroys in_list from heap.
- * the callee is responsible for ing node data.
- * the node d-function(pfunc) is called by list_destroy.
- */
-extern void
-list_destroy(list_t *in_list, pfcb_list_node_free pfunc /* NULL for no use or a key node */);
-
-/* Gets count of nodes in the list */
-extern size_t
-list_size(const list_t* in_list);
-
-/* Gets node by index 0-based. 0 is head */
-extern listnode_t*
-list_node_at(const list_t* in_list, int index);
+//删除链表中的指定元素值
+T_NODE * del_specific_var(T_NODE *list_head,void *del_var, var_deleter deleter);
 
 #endif // WEX_LIST_H_INCLUDED

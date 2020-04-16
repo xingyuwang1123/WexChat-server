@@ -98,6 +98,35 @@ void getalluserinfo_parser(neo4j_result_stream_t *results, void *result) {
     }
 }
 
+void query_cutin_by_uid_parser(neo4j_result_stream_t *results, void *result) {
+    char *res = (char *)result;
+    neo4j_result_t *nres = neo4j_fetch_next(results);
+    if (nres == NULL) {
+        wexlog(wex_log_warning, "failed to fetch result");
+        return;
+    }
+    neo4j_value_t value = neo4j_result_field(nres, 0);
+    neo4j_string_value(value, result, MAX_SHORT_STRING_LENGTH);
+}
+
+void query_allfriends_by_uid_parser(neo4j_result_stream_t *results, void *result) {
+    T_NODE *head = (T_NODE*)result;
+    neo4j_result_t *res = NULL;
+    //char temp[MAX_SHORT_STRING_LENGTH];
+    while(res = neo4j_fetch_next(results)) {
+        neo4j_value_t value1 = neo4j_result_field(res, 0);
+        neo4j_value_t value2 = neo4j_result_field(res, 1);
+        neo4j_value_t value3 = neo4j_result_field(res, 2);
+        neo4j_value_t value4 = neo4j_result_field(res, 3);
+        wex_entity_frienditem *item = wex_entity_frienditem_alloc();
+        sprintf(item->uid, "%d", neo4j_int_value(value1));
+        neo4j_string_value(value2, item->username, MAX_SHORT_STRING_LENGTH);
+        neo4j_string_value(value3, item->header, MAX_SHORT_STRING_LENGTH);
+        neo4j_string_value(value4, item->cutin, MAX_SHORT_STRING_LENGTH);
+        list_tail_insert(head, item);
+    }
+}
+
 //query here
 int register_query(wex_entity_user *user) {
     char statement[256];
@@ -166,6 +195,42 @@ int update_userinfo_by_uid(wex_entity_user *user) {
     char statement[256];
     statement[0] = '\0';
     sprintf(statement, "match (n:User) where id(n)=%s set n.nickname='%s',n.birthtime=%d,n.email='%s',n.address_c = '%s',n.address_p='%s',n.note='%s',n.introduction='%s'", user->uid, user->nickname, user->birthtime, user->email, user->address_p, user->address_c, user->note, user->introduction);
+    int ret = wex_neo4j_do_query(statement);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
+
+int query_cutin_by_uid(const char *uid, char *cutin) {
+    char statement[256];
+    statement[0] = '\0';
+    sprintf(statement, "match (n:User) where id(n)=%s return n.cutin", uid);
+    int ret = wex_neo4j_do_query_with_result(statement, cutin, &query_cutin_by_uid_parser);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
+
+int query_allfriends_by_uid(const char *uid, T_NODE *friend_head) {
+    char statement[256];
+    statement[0] = '\0';
+    sprintf(statement, "match (n:User)-[r1:FRIENDS]->(m:User) where id(n)=%s return id(m),m.username,m.header,r1.cutin", uid);
+    int ret = wex_neo4j_do_query_with_result(statement, friend_head, &query_allfriends_by_uid_parser);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
+
+int update_cutin_by_uid(const char *uid, const char *cutin) {
+    char statement[256];
+    statement[0] = '\0';
+    sprintf(statement, "match (n:User) where id(n)=%s set n.cutin = '%s'", uid, cutin);
     int ret = wex_neo4j_do_query(statement);
     if (ret < 0) {
         wexlog(wex_log_warning, "query:error  in querying neo4j");
