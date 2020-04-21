@@ -28,6 +28,10 @@ typedef struct {
 #define WEX_ERROR_MSG2 "RES 20 WEX/1.0 0 \n"
 #define WEX_ERROR_MSG3 "RES 30 WEX/1.0 0 \n"
 
+//fast message inform
+
+#define WEX_MESSAGE_INFORM "BRO 00 WEX/1.0 \n"
+
 /*
 if flag is 0, set creq to NULL, and it will construct a request; or it will add buf to content.
 return NULL if failed

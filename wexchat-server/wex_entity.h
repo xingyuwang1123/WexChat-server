@@ -31,13 +31,24 @@ typedef struct {
     char *cutin;
 }wex_entity_frienditem;
 
+typedef struct {
+    char *header;
+    char *name;
+    char *uid;
+    char *applyinfo;
+}wex_entity_applyitem;
+
 //entity allocker
 wex_entity_user *wex_entity_user_alloc();
 
 wex_entity_frienditem *wex_entity_frienditem_alloc();
+
+wex_entity_applyitem *wex_entity_applyitem_alloc();
 //entity freeder
 void wex_entity_user_free(wex_entity_user *user);
 
 void wex_entity_frienditem_free(wex_entity_frienditem *frienditem);
+
+void wex_entity_applyitem_free(wex_entity_applyitem *item);
 
 #endif // WEX_ENTITY_H_INCLUDED

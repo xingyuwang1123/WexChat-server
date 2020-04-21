@@ -32,5 +32,23 @@ char *wex_logic_doenter(const char *method, char *content, size_t length) {
     else if (!strncmp(method, "updatecutinbyuid", MAX_METHODNAME_LENGTH)) {
         updatecutinbyuid_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
     }
+    else if (!strncmp(method, "applyfriend", MAX_METHODNAME_LENGTH)) {
+        applyfriend_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
+    }
+    else if (!strncmp(method, "getallapply", MAX_METHODNAME_LENGTH)) {
+        getallapply_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
+    }
+    else if (!strncmp(method, "rejectapply", MAX_METHODNAME_LENGTH)) {
+        rejectapply_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
+    }
+    else if (!strncmp(method, "acceptapply", MAX_METHODNAME_LENGTH)) {
+        acceptapply_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
+    }
+    else if (!strncmp(method, "deletefriend", MAX_METHODNAME_LENGTH)) {
+        deletefriend_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
+    }
+    else if (!strncmp(method, "changeheaderbyuid", MAX_METHODNAME_LENGTH)) {
+        changeheaderbyuid_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
+    }
     return res;
 }

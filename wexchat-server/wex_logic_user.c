@@ -240,3 +240,138 @@ int updatecutinbyuid_processer(char *content, size_t length, char *res, size_t r
 }
 
 
+int applyfriend_processer(char *content, size_t length, char *res, size_t res_length) {
+    cJSON *json = cJSON_Parse(content);
+    if (json == NULL) {
+        wexlog(wex_log_warning, "error in parsing json");
+        strcpy(res, "failed");
+        return -1;
+    }
+    cJSON *fromuidj = cJSON_GetObjectItem(json, "fromuid");
+    cJSON *touidj = cJSON_GetObjectItem(json, "touid");
+    cJSON *inforj = cJSON_GetObjectItem(json, "information");
+
+    int ret = create_apply_query(fromuidj->valuestring, touidj->valuestring, inforj->valuestring);
+    if (ret < 0) {
+        strcpy(res, "failed");
+    }
+    else {
+        strcpy(res, "ok");
+    }
+    cJSON_Delete(json);
+    return 0;
+}
+
+int getallapply_processer(char *content, size_t length, char *res, size_t res_length) {
+    char uid[MAX_UID_LENGTH];
+    strncpy(uid, content, MAX_UID_LENGTH);
+    //create mid struct
+    T_NODE *head = list_init(0);
+    int ret = query_allapply_by_uid(uid, head);
+    if (ret < 0) {
+        strcpy(res, "failed");
+    }
+    else {
+        //strcpy(res, "ok");
+        cJSON *arr = cJSON_CreateArray();
+        T_NODE *temp = head;
+        while (temp->link) {
+            temp = temp->link;
+            wex_entity_applyitem *item = (wex_entity_applyitem *)temp->var;
+            cJSON *node = cJSON_CreateObject();
+            cJSON_AddItemToObject(node, "uid", cJSON_CreateString(item->uid));
+            cJSON_AddItemToObject(node, "name", cJSON_CreateString(item->name));
+            cJSON_AddItemToObject(node, "header", cJSON_CreateString(item->header));
+            cJSON_AddItemToObject(node, "applyinfo", cJSON_CreateString(item->applyinfo));
+            cJSON_AddItemToArray(arr, node);
+        }
+        char *buf = cJSON_PrintUnformatted(arr);
+        strncpy(res, buf, ORIGINAL_CONTENT_LENGTH);
+        free(buf);
+        cJSON_Delete(arr);
+    }
+    del_list(head, &wex_entity_applyitem_free);
+    return 0;
+}
+
+int rejectapply_processer(char *content, size_t length, char *res, size_t res_length) {
+    cJSON *json = cJSON_Parse(content);
+    if (json == NULL) {
+        wexlog(wex_log_warning, "error in parsing json");
+        strcpy(res, "failed");
+        return -1;
+    }
+    cJSON *fromuidj = cJSON_GetObjectItem(json, "fromuid");
+    cJSON *touidj = cJSON_GetObjectItem(json, "touid");
+    int ret = delete_friends_apply(fromuidj->valuestring, touidj->valuestring);
+    if (ret < 0) {
+        strcpy(res, "failed");
+    }
+    else {
+        strcpy(res, "ok");
+    }
+    cJSON_Delete(json);
+    return 0;
+}
+
+int acceptapply_processer(char *content, size_t length, char *res, size_t res_length) {
+    cJSON *json = cJSON_Parse(content);
+    if (json == NULL) {
+        wexlog(wex_log_warning, "error in parsing json");
+        strcpy(res, "failed");
+        return -1;
+    }
+    cJSON *fromuidj = cJSON_GetObjectItem(json, "fromuid");
+    cJSON *touidj = cJSON_GetObjectItem(json, "touid");
+    cJSON *cutinj = cJSON_GetObjectItem(json, "cutin");
+    int ret = create_friends_query(fromuidj->valuestring, touidj->valuestring, cutinj->valuestring);
+    if (ret < 0) {
+        strcpy(res, "failed");
+    }
+    else {
+        strcpy(res, "ok");
+    }
+    cJSON_Delete(json);
+    return 0;
+}
+
+
+int deletefriend_processer(char *content, size_t length, char *res, size_t res_length) {
+    cJSON *json = cJSON_Parse(content);
+    if (json == NULL) {
+        wexlog(wex_log_warning, "error in parsing json");
+        strcpy(res, "failed");
+        return -1;
+    }
+    cJSON *fromuidj = cJSON_GetObjectItem(json, "fromuid");
+    cJSON *touidj = cJSON_GetObjectItem(json, "touid");
+    int ret = delete_friends_query(fromuidj->valuestring, touidj->valuestring);
+    if (ret < 0) {
+        strcpy(res, "failed");
+    }
+    else {
+        strcpy(res, "ok");
+    }
+    cJSON_Delete(json);
+    return 0;
+}
+
+int changeheaderbyuid_processer(char *content, size_t length, char *res, size_t res_length) {
+    cJSON *json = cJSON_Parse(content);
+    if (json == NULL) {
+        wexlog(wex_log_warning, "error in parsing json");
+        strcpy(res, "failed");
+        return -1;
+    }
+    cJSON *uidj = cJSON_GetObjectItem(json, "uid");
+    cJSON *headerj = cJSON_GetObjectItem(json, "header");
+    int ret = update_header_by_uid(uidj->valuestring, headerj->valuestring);
+    if (ret < 0) {
+        strcpy(res, "failed");
+    }
+    else {
+        strcpy(res, "ok");
+    }
+    cJSON_Delete(json);
+    return 0;
+}

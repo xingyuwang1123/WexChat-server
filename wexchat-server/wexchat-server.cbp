@@ -123,6 +123,13 @@
 		<Unit filename="wex_unixconf.h">
 			<Option virtualFolder="tools/" />
 		</Unit>
+		<Unit filename="wex_userlist.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="server/" />
+		</Unit>
+		<Unit filename="wex_userlist.h">
+			<Option virtualFolder="server/" />
+		</Unit>
 		<Unit filename="wexlog.c">
 			<Option compilerVar="CC" />
 			<Option virtualFolder="tools/" />

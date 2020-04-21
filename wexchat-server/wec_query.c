@@ -127,6 +127,23 @@ void query_allfriends_by_uid_parser(neo4j_result_stream_t *results, void *result
     }
 }
 
+void query_allapply_by_uid_parser(neo4j_result_stream_t *results, void *result) {
+    T_NODE *head = (T_NODE *)result;
+    neo4j_result_t *res = NULL;
+    while(res = neo4j_fetch_next(results)) {
+        neo4j_value_t value1 = neo4j_result_field(res, 0);
+        neo4j_value_t value2 = neo4j_result_field(res, 1);
+        neo4j_value_t value3 = neo4j_result_field(res, 2);
+        neo4j_value_t value4 = neo4j_result_field(res, 3);
+        wex_entity_applyitem *item = wex_entity_applyitem_alloc();
+        sprintf(item->uid, "%d", neo4j_int_value(value1));
+        neo4j_string_value(value2, item->header, MAX_SHORT_STRING_LENGTH);
+        neo4j_string_value(value3, item->name, MAX_SHORT_STRING_LENGTH);
+        neo4j_string_value(value4, item->applyinfo, MAX_SHORT_STRING_LENGTH);
+        list_tail_insert(head, item);
+    }
+}
+
 //query here
 int register_query(wex_entity_user *user) {
     char statement[256];
@@ -239,6 +256,84 @@ int update_cutin_by_uid(const char *uid, const char *cutin) {
     return 0;
 }
 
+int create_apply_query(const char *fromuid, const char *touid, const char *applyinfo) {
+    char statement[256];
+    statement[0] = '\0';
+    sprintf(statement, "match (n:User),(m:User) where id(n)=%s and id(m)=%s merge (n)-[r1:FRIENDSAPPLY {created_at:timestamp(),apply_info:'%s'}]->(m)", fromuid, touid, applyinfo);
+    int ret = wex_neo4j_do_query(statement);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+
+}
+
+int query_allapply_by_uid(const char *uid, T_NODE *apply_list) {
+    char statement[256];
+    statement[0] = '\0';
+    sprintf(statement, "match (n:User)-[r1:FRIENDSAPPLY]->(m:User) where id(m)=%s return id(n),n.header,n.nickname,r1.apply_info", uid);
+    int ret = wex_neo4j_do_query_with_result(statement, apply_list, &query_allapply_by_uid_parser);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
+
+int delete_friends_apply(const char *fromuid, const char *touid) {
+    char statement[256];
+    statement[0] = '\0';
+    sprintf(statement, "match (n:User)-[r1:FRIENDSAPPLY]->(m:User) where id(n)=%s and id(m)=%s delete r1", fromuid, touid);
+    int ret = wex_neo4j_do_query(statement);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
+
+int create_friends_query(const char *fromuid, const char *touid, const char *cutin) {
+    char statement[512];
+    statement[0] = '\0';
+    sprintf(statement, "match (n:User)-[r1:FRIENDSAPPLY]->(m:User) where id(n)=%s and id(m)=%s delete r1;", fromuid, touid);
+    int ret = wex_neo4j_do_query(statement);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        //return -1;
+    }
+    sprintf(statement, "match (n:User),(m:User) where id(n)=%s and id(m)=%s create (n)-[r1:FRIENDS {created_at:timestamp(),cutin:''}]->(m),(m)-[r2:FRIENDS {created_at:timestamp(),cutin:'%s'}]->(n);",fromuid, touid, cutin);
+    int ret2 = wex_neo4j_do_query(statement);
+    if (ret2 < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        //return -1;
+    }
+    return ret-ret2;
+}
+
+int delete_friends_query(const char *fromuid, const char *touid) {
+    char statement[256];
+    statement[0] = '\0';
+    sprintf(statement, "match (n:User)-[r1:FRIENDS]->(m:User),(m:User)-[r2:FRIENDS]->(n:User) where id(n)=%s and id(m)=%s delete r1,r2", fromuid, touid);
+    int ret = wex_neo4j_do_query(statement);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
+
+int update_header_by_uid(const char *uid, const char *header) {
+    char statement[256];
+    statement[0] = '\0';
+    sprintf(statement, "match (n:User) where id(n)=%s set n.header='%s'", uid, header);
+    int ret = wex_neo4j_do_query(statement);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
 //int main () {
 //    int ret = wex_neo4j_connect_to_server("127.0.0.1", "7687", "neo4j", "137730");
 //    if (ret < 0) {

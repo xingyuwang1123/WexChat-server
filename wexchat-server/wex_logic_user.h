@@ -19,4 +19,16 @@ int getallfriendsbyuid_processer(char *content, size_t length, char *res, size_t
 
 int updatecutinbyuid_processer(char *content, size_t length, char *res, size_t res_length);
 
+int applyfriend_processer(char *content, size_t length, char *res, size_t res_length);
+
+int getallapply_processer(char *content, size_t length, char *res, size_t res_length);
+
+int rejectapply_processer(char *content, size_t length, char *res, size_t res_length);
+
+int acceptapply_processer(char *content, size_t length, char *res, size_t res_length);
+
+int deletefriend_processer(char *content, size_t length, char *res, size_t res_length);
+
+int changeheaderbyuid_processer(char *content, size_t length, char *res, size_t res_length);
+
 #endif

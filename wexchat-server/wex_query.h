@@ -16,10 +16,22 @@ int query_alluserinfo_by_uid(const char *uid, wex_entity_user *user);
 
 int update_userinfo_by_uid(wex_entity_user *user);
 
+int update_header_by_uid(const char *uid, const char *header);
+
 int query_cutin_by_uid(const char *uid, char *cutin);
 
 int query_allfriends_by_uid(const char *uid, T_NODE *friend_head);
 
 int update_cutin_by_uid(const char *uid, const char *cutin);
+
+int create_apply_query(const char *fromuid, const char *touid, const char *applyinfo);
+
+int query_allapply_by_uid(const char *uid, T_NODE *apply_list);
+
+int delete_friends_apply(const char *fromuid, const char *touid);
+
+int create_friends_query(const char *fromuid, const char *touid, const char *cutin);
+
+int delete_friends_query(const char *fromuid, const char *touid);
 
 #endif // WEX_QUERY_H_INCLUDED
