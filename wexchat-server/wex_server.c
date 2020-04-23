@@ -12,6 +12,7 @@
 #include "threadpool.h"
 #include "wex_neo4j_connctor.h"
 #include "wex_logic_interface.h"
+#include "wex_userlist.h"
 
 static threadpool_t *wex_pool;
 
@@ -65,6 +66,8 @@ int wex_init_server(void) {
     if (ret < 0) {
         wexlog(wex_log_error_with_perror, "disconnect to neo4j");
     }
+    //init userlist
+    wex_init_userlist();
     return listenfd;
 }
 
@@ -182,7 +185,7 @@ void str_echo(void *sockfd) {
                 }
             }
             //do response
-            char *res = wex_logic_doenter(req->method_name, req->content, req->msg_length);
+            char *res = wex_logic_doenter(req->method_name, req->content, req->msg_length, sockfd2);
             wex_free_request(req);
             wex_protocol_response *response = wex_construct_response("00", "WEX", "1.0", strlen(res), res, 0);
             char *writebuf = malloc(sizeof(char) * ORIGINAL_CONTENT_LENGTH);
@@ -202,10 +205,12 @@ error:    if (len < 0 && errno == EINTR)
         wexlog(wex_log_debug, "str_echo: read err");
         close(sockfd2);
         free(sockfd);
+        wex_remove_userlist_bydesc(sockfd2);
     }
     else {
         close(sockfd2);
         free(sockfd);
+        wex_remove_userlist_bydesc(sockfd2);
         //printf("ternimal closed");
         wexlog(wex_log_debug, "ternimal closed");
     }
@@ -219,4 +224,5 @@ void wex_quit_server(void) {
     }
     wex_neo4j_endup();
     wex_free_conf(wex_conf);
+
 }

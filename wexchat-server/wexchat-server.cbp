@@ -85,6 +85,13 @@
 		<Unit filename="wex_logic_interface.h">
 			<Option virtualFolder="logic/" />
 		</Unit>
+		<Unit filename="wex_logic_message.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="logic/" />
+		</Unit>
+		<Unit filename="wex_logic_message.h">
+			<Option virtualFolder="logic/" />
+		</Unit>
 		<Unit filename="wex_logic_user.c">
 			<Option compilerVar="CC" />
 			<Option virtualFolder="logic/" />

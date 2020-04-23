@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int login_processer(char *content, size_t length, char *res, size_t res_length);
+int login_processer(char *content, size_t length, char *res, size_t res_length, int socket);
 
 int register_processer(char *content, size_t length, char *res, size_t res_length);
 

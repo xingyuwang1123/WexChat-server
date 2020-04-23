@@ -4,12 +4,12 @@
 #include <stdlib.h>
 
 
-char *wex_logic_doenter(const char *method, char *content, size_t length) {
+char *wex_logic_doenter(const char *method, char *content, size_t length, int socket) {
     char *res = malloc(sizeof(char) * ORIGINAL_CONTENT_LENGTH);
     res[0] = '\0';
     //expand here
     if (!strncmp(method, "login", MAX_METHODNAME_LENGTH)) {
-        int ret = login_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
+        int ret = login_processer(content, length, res, ORIGINAL_CONTENT_LENGTH, socket);
     }
     else if (!strncmp(method, "register", MAX_METHODNAME_LENGTH)) {
         int ret = register_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);

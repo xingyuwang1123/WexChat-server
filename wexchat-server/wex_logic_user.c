@@ -4,8 +4,9 @@
 #include "wex_entity.h"
 #include "wex_query.h"
 #include "wex_data_constraints.h"
+#include "wex_userlist.h"
 
-int login_processer(char *content, size_t length, char *res, size_t res_length) {
+int login_processer(char *content, size_t length, char *res, size_t res_length, int socket) {
     cJSON *json = cJSON_Parse(content);
     if (json == NULL) {
         wexlog(wex_log_warning, "error in parsing json");
@@ -41,6 +42,8 @@ int login_processer(char *content, size_t length, char *res, size_t res_length) 
             free(temp);
             cJSON_Delete(json2);
             //strcpy(res, "loginok");
+            //we should add user to userlist and let them available
+            wex_add_userlist(res3, socket);
         }
     }
 error:    cJSON_Delete(json);

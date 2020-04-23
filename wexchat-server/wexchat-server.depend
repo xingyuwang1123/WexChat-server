@@ -15,7 +15,7 @@
 	"wex_neo4j_connctor.h"
 	"wex_logic_interface.h"
 
-1586848153 source:/home/sca/Documents/WexChat-server/wexchat-server/main.c
+1587617858 source:/home/sca/Documents/WexChat-server/wexchat-server/main.c
 	<stdio.h>
 	<stdlib.h>
 	"wex_server.h"
@@ -102,7 +102,7 @@
 
 1585713920 /home/sca/Documents/WexChat-server/wexchat-server/wex_data_constraints.h
 
-1584596095 /home/sca/Documents/WexChat-server/wexchat-server/wex_protocol_parser.h
+1587459381 /home/sca/Documents/WexChat-server/wexchat-server/wex_protocol_parser.h
 	"wex_data_constraints.h"
 	<stdint.h>
 	<stdio.h>
@@ -112,20 +112,20 @@
 	<string.h>
 	<stdlib.h>
 
-1584800598 /home/sca/Documents/WexChat-server/wexchat-server/wex_logic_interface.h
+1587618038 /home/sca/Documents/WexChat-server/wexchat-server/wex_logic_interface.h
 	"wex_protocol_parser.h"
 
-1587447519 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_logic_interface.c
+1587618046 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_logic_interface.c
 	"wex_logic_interface.h"
 	"wex_data_constraints.h"
 	"wex_logic_user.h"
 	<stdlib.h>
 
-1587447490 /home/sca/Documents/WexChat-server/wexchat-server/wex_logic_user.h
+1587618097 /home/sca/Documents/WexChat-server/wexchat-server/wex_logic_user.h
 	<stdio.h>
 	<stdlib.h>
 
-1587448123 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_logic_user.c
+1587617941 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_logic_user.c
 	"wex_logic_user.h"
 	"wexlog.h"
 	"cJSON.h"
@@ -133,14 +133,23 @@
 	"wex_query.h"
 	"wex_data_constraints.h"
 
-1587450833 source:/home/sca/Documents/WexChat-server/wexchat-server/wec_query.c
+1587455853 source:/home/sca/Documents/WexChat-server/wexchat-server/wec_query.c
 	<stdio.h>
 	"wex_neo4j_connctor.h"
 	"wex_query.h"
 	"wexlog.h"
 	"wex_data_constraints.h"
 
-1587450764 /home/sca/Documents/WexChat-server/wexchat-server/wex_query.h
+1587455754 /home/sca/Documents/WexChat-server/wexchat-server/wex_query.h
 	"wex_entity.h"
 	"wex_list.h"
+
+1587617853 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_userlist.c
+	"wex_userlist.h"
+	"wexlog.h"
+
+1587618373 /home/sca/Documents/WexChat-server/wexchat-server/wex_userlist.h
+	"wex_hashmap.h"
+	"wex_list.h"
+	"wex_data_constraints.h"
 

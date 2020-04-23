@@ -12,7 +12,7 @@ method: protocol method
 content: protocol content
 return the processed data by logic layer
 */
-char *wex_logic_doenter(const char *method, char *content, size_t length);
+char *wex_logic_doenter(const char *method, char *content, size_t length, int socket);
 
 
 #endif // WEX_LOGIC_INTERFACE_H_INCLUDED
