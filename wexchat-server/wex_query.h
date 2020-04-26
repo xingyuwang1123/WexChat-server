@@ -34,4 +34,6 @@ int create_friends_query(const char *fromuid, const char *touid, const char *cut
 
 int delete_friends_query(const char *fromuid, const char *touid);
 
+int create_message_query(wex_entity_msgitem *item);
+
 #endif // WEX_QUERY_H_INCLUDED

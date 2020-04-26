@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1587260595 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_server.c
+1587618425 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_server.c
 	"wex_server.h"
 	<stdio.h>
 	<stdlib.h>
@@ -14,6 +14,7 @@
 	"threadpool.h"
 	"wex_neo4j_connctor.h"
 	"wex_logic_interface.h"
+	"wex_userlist.h"
 
 1587617858 source:/home/sca/Documents/WexChat-server/wexchat-server/main.c
 	<stdio.h>
@@ -92,12 +93,12 @@
 1585026512 /home/sca/Documents/WexChat-server/wexchat-server/cJSON.h
 	<stdlib.h>
 
-1587183440 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_entity.c
+1587879872 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_entity.c
 	"wex_entity.h"
 	"wex_data_constraints.h"
 	<stdlib.h>
 
-1587183282 /home/sca/Documents/WexChat-server/wexchat-server/wex_entity.h
+1587879831 /home/sca/Documents/WexChat-server/wexchat-server/wex_entity.h
 	<time.h>
 
 1585713920 /home/sca/Documents/WexChat-server/wexchat-server/wex_data_constraints.h
@@ -115,7 +116,7 @@
 1587618038 /home/sca/Documents/WexChat-server/wexchat-server/wex_logic_interface.h
 	"wex_protocol_parser.h"
 
-1587618046 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_logic_interface.c
+1587866968 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_logic_interface.c
 	"wex_logic_interface.h"
 	"wex_data_constraints.h"
 	"wex_logic_user.h"
@@ -125,26 +126,27 @@
 	<stdio.h>
 	<stdlib.h>
 
-1587617941 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_logic_user.c
+1587618209 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_logic_user.c
 	"wex_logic_user.h"
 	"wexlog.h"
 	"cJSON.h"
 	"wex_entity.h"
 	"wex_query.h"
 	"wex_data_constraints.h"
+	"wex_userlist.h"
 
-1587455853 source:/home/sca/Documents/WexChat-server/wexchat-server/wec_query.c
+1587880234 source:/home/sca/Documents/WexChat-server/wexchat-server/wec_query.c
 	<stdio.h>
 	"wex_neo4j_connctor.h"
 	"wex_query.h"
 	"wexlog.h"
 	"wex_data_constraints.h"
 
-1587455754 /home/sca/Documents/WexChat-server/wexchat-server/wex_query.h
+1587879939 /home/sca/Documents/WexChat-server/wexchat-server/wex_query.h
 	"wex_entity.h"
 	"wex_list.h"
 
-1587617853 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_userlist.c
+1587867602 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_userlist.c
 	"wex_userlist.h"
 	"wexlog.h"
 
@@ -152,4 +154,17 @@
 	"wex_hashmap.h"
 	"wex_list.h"
 	"wex_data_constraints.h"
+
+1587880540 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_logic_message.c
+	"wex_logic_message.h"
+	"wexlog.h"
+	"cJSON.h"
+	"wex_entity.h"
+	"wex_query.h"
+	"wex_data_constraints.h"
+	"wex_userlist.h"
+
+1587868386 /home/sca/Documents/WexChat-server/wexchat-server/wex_logic_message.h
+	<stdio.h>
+	<stdlib.h>
 

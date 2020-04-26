@@ -50,5 +50,8 @@ char *wex_logic_doenter(const char *method, char *content, size_t length, int so
     else if (!strncmp(method, "changeheaderbyuid", MAX_METHODNAME_LENGTH)) {
         changeheaderbyuid_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
     }
+    else if (!strncmp(method, "sendmessagetouser", MAX_METHODNAME_LENGTH)) {
+        sendmessagetouser_processer(content, length, res, ORIGINAL_CONTENT_LENGTH, socket);
+    }
     return res;
 }

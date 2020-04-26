@@ -1,0 +1,7 @@
+#include "wex_logic_group.h"
+#include "wexlog.h"
+#include "cJSON.h"
+#include "wex_entity.h"
+#include "wex_query.h"
+#include "wex_data_constraints.h"
+#include "wex_userlist.h"

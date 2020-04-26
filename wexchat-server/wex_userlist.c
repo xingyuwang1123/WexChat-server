@@ -56,7 +56,7 @@ int wex_find_userlist(const char *uid) {
         if (!strncmp(item->uid, uid, MAX_UID_LENGTH)) {
             //del_specific_var(user_table, item, &item_deleter);
             return item->descripter;
-            return 0;
+            //return 0;
         }
     }
     return -1;

@@ -78,6 +78,13 @@
 		<Unit filename="wex_list.h">
 			<Option virtualFolder="tools/" />
 		</Unit>
+		<Unit filename="wex_logic_group.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="logic/" />
+		</Unit>
+		<Unit filename="wex_logic_group.h">
+			<Option virtualFolder="logic/" />
+		</Unit>
 		<Unit filename="wex_logic_interface.c">
 			<Option compilerVar="CC" />
 			<Option virtualFolder="logic/" />

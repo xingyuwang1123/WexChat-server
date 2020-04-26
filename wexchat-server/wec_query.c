@@ -334,6 +334,19 @@ int update_header_by_uid(const char *uid, const char *header) {
     }
     return 0;
 }
+
+int create_message_query(wex_entity_msgitem *item) {
+    char statement[256];
+    statement[0] = '\0';
+    sprintf(statement, "create (m:MESSAGE {text:'%s',created_at:%d,fromuid:'%s',area:'%s',type:%d})",item->text, item->msgtime, item->fromuid, item->area, item->type);
+
+    int ret = wex_neo4j_do_query(statement);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
 //int main () {
 //    int ret = wex_neo4j_connect_to_server("127.0.0.1", "7687", "neo4j", "137730");
 //    if (ret < 0) {

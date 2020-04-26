@@ -59,6 +59,17 @@ wex_entity_applyitem *wex_entity_applyitem_alloc() {
     return item;
 }
 
+wex_entity_msgitem *wex_entity_msgitem_alloc() {
+    wex_entity_msgitem *item = malloc(sizeof(wex_entity_msgitem));
+    item->text = malloc(sizeof(char) * MAX_SHORT_STRING_LENGTH);
+    item->text[0] = '/0';
+    item->fromuid = malloc(sizeof(char) * MAX_UID_LENGTH);
+    item->fromuid[0] = '/0';
+    item->area = malloc(sizeof(char) * MAX_UID_LENGTH);
+    item->area[0] = '/0';
+    return item;
+}
+
 void wex_entity_user_free(wex_entity_user *user) {
     free(user->uid);
     free(user->username);
@@ -88,5 +99,12 @@ void wex_entity_applyitem_free(wex_entity_applyitem *item) {
     free(item->header);
     free(item->name);
     free(item->uid);
+    free(item);
+}
+
+void wex_entity_msgitem_free(wex_entity_msgitem *item) {
+    free(item->area);
+    free(item->fromuid);
+    free(item->text);
     free(item);
 }

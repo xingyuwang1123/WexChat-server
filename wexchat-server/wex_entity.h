@@ -38,17 +38,29 @@ typedef struct {
     char *applyinfo;
 }wex_entity_applyitem;
 
+typedef struct {
+    char *text;
+    char *fromuid;
+    char *area;
+    int type;
+    time_t msgtime;
+}wex_entity_msgitem;
+
 //entity allocker
 wex_entity_user *wex_entity_user_alloc();
 
 wex_entity_frienditem *wex_entity_frienditem_alloc();
 
 wex_entity_applyitem *wex_entity_applyitem_alloc();
+
+wex_entity_msgitem *wex_entity_msgitem_alloc();
 //entity freeder
 void wex_entity_user_free(wex_entity_user *user);
 
 void wex_entity_frienditem_free(wex_entity_frienditem *frienditem);
 
 void wex_entity_applyitem_free(wex_entity_applyitem *item);
+
+void wex_entity_msgitem_free(wex_entity_msgitem *item);
 
 #endif // WEX_ENTITY_H_INCLUDED
