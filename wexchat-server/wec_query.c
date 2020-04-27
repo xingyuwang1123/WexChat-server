@@ -144,6 +144,43 @@ void query_allapply_by_uid_parser(neo4j_result_stream_t *results, void *result) 
     }
 }
 
+void query_groupinfo_by_id_parser(neo4j_result_stream_t *results, void *result) {
+    wex_entity_groupitem *item  =(wex_entity_groupitem *)result;
+    neo4j_result_t *res;
+    if ((res = neo4j_fetch_next(results)) == NULL) {
+        wexlog(wex_log_warning, "failed to fetch result");
+        return;
+    }
+    neo4j_value_t value1 = neo4j_result_field(res, 0);
+    neo4j_value_t value2 = neo4j_result_field(res, 1);
+    neo4j_value_t value3 = neo4j_result_field(res, 2);
+    neo4j_value_t value4 = neo4j_result_field(res, 3);
+    neo4j_string_value(value1, item->name, MAX_SHORT_STRING_LENGTH);
+    neo4j_string_value(value2, item->header, MAX_SHORT_STRING_LENGTH);
+    neo4j_string_value(value3, item->intro, MAX_SHORT_STRING_LENGTH);
+    long uid = neo4j_int_value(value4);
+    sprintf(item->masteruid, "%ld", uid);
+}
+
+void query_allgroupinfo_by_uid_parser(neo4j_result_stream_t *results, void *result) {
+    T_NODE *head = (T_NODE *)result;
+    neo4j_result_t *res = NULL;
+    while(res = neo4j_fetch_next(results)) {
+        neo4j_value_t value1 = neo4j_result_field(res, 0);
+        neo4j_value_t value2 = neo4j_result_field(res, 1);
+        neo4j_value_t value3 = neo4j_result_field(res, 2);
+        neo4j_value_t value4 = neo4j_result_field(res, 3);
+        neo4j_value_t value5 = neo4j_result_field(res, 4);
+        wex_entity_groupitem *item = wex_entity_groupitem_alloc();
+        sprintf(item->masteruid, "%ld", neo4j_int_value(value1));
+        neo4j_string_value(value2, item->name, MAX_SHORT_STRING_LENGTH);
+        neo4j_string_value(value3, item->intro, MAX_SHORT_STRING_LENGTH);
+        neo4j_string_value(value4, item->header, MAX_SHORT_STRING_LENGTH);
+        item->tip = neo4j_int_value(value5);
+        list_tail_insert(head, item);
+    }
+}
+
 //query here
 int register_query(wex_entity_user *user) {
     char statement[256];
@@ -346,6 +383,57 @@ int create_message_query(wex_entity_msgitem *item) {
         return -1;
     }
     return 0;
+}
+
+int create_group_query(wex_entity_groupitem *item) {
+    char statement[512];
+    statement[0] = '\0';
+    sprintf(statement, "match (n:User) where id(n)=%s create (g:Group {groupname:'%s',introduction:'%s',created_at:timestamp(),header:'%s'})-[r1:GROUPMASTER {joint_at:timestamp()}]->(n)", item->masteruid,item->name,item->intro, item->header);
+
+    int ret = wex_neo4j_do_query(statement);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
+
+int query_groupinfo_by_id(const char *gid, wex_entity_groupitem *item) {
+    char statement[256];
+    statement[0] = '\0';
+    sprintf(statement, "match (g:Group)-[r1:GROUPMASTER]->(n:User) where id(g)=%s return g.groupname,g.header,g.introduction,id(n)", gid);
+    int ret = wex_neo4j_do_query_with_result(statement, item, &query_groupinfo_by_id_parser);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
+
+int create_groupapply_query(const char *gid, const char *uid, const char appinfo) {
+    char statement[512];
+    statement[0] = '\0';
+    sprintf(statement, "match (g:Group),(n:User) where id(g)=%s and id(n)=%s create (g)-[r1:GROUPAPPLY {created_at:timestamp(),applyinfo:'%s'}]->(n)",gid,uid,appinfo);
+    int ret = wex_neo4j_do_query(statement);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
+
+int query_allgroupinfo_by_uid(const char *uid, T_NODE *head) {
+    char statement[512];
+    statement[0] = '\0';
+    sprintf(statement, "match (g:Group)-[r1:GROUPMASTER]->(n:User) where id(n)=%s return id(g),g.groupname,g.introduction,g.header,0 as tip union match (g:Group)-[r1:GROUPMEMBER]->(n:User) where id(n)=%s return id(g),g.groupname,g.introduction,g.header,1 as tip", uid, uid);
+
+    int ret = wex_neo4j_do_query_with_result(statement, head, &query_allgroupinfo_by_uid_parser);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+
 }
 //int main () {
 //    int ret = wex_neo4j_connect_to_server("127.0.0.1", "7687", "neo4j", "137730");

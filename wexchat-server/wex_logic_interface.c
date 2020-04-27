@@ -53,5 +53,17 @@ char *wex_logic_doenter(const char *method, char *content, size_t length, int so
     else if (!strncmp(method, "sendmessagetouser", MAX_METHODNAME_LENGTH)) {
         sendmessagetouser_processer(content, length, res, ORIGINAL_CONTENT_LENGTH, socket);
     }
+    else if (!strncmp(method, "creategroupbyuid", MAX_METHODNAME_LENGTH)) {
+        creategroupbyuid_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
+    }
+    else if (!strncmp(method, "getgroupinfobyid", MAX_METHODNAME_LENGTH)) {
+        getgroupinfobyid_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
+    }
+    else if (!strncmp(method, "doapplygroup", MAX_METHODNAME_LENGTH)) {
+        doapplygroup_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
+    }
+    else if (!strncmp(method, "getallgroupsbyuid", MAX_METHODNAME_LENGTH)) {
+        getallgroupsbyuid_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
+    }
     return res;
 }

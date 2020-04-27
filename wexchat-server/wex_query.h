@@ -36,4 +36,12 @@ int delete_friends_query(const char *fromuid, const char *touid);
 
 int create_message_query(wex_entity_msgitem *item);
 
+int create_group_query(wex_entity_groupitem *item);
+
+int query_groupinfo_by_id(const char *gid, wex_entity_groupitem *item);
+
+int create_groupapply_query(const char *gid, const char *uid, const char appinfo);
+
+int query_allgroupinfo_by_uid(const char *uid, T_NODE *head);
+
 #endif // WEX_QUERY_H_INCLUDED

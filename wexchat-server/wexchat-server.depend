@@ -93,15 +93,16 @@
 1585026512 /home/sca/Documents/WexChat-server/wexchat-server/cJSON.h
 	<stdlib.h>
 
-1587879872 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_entity.c
+1587967411 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_entity.c
 	"wex_entity.h"
 	"wex_data_constraints.h"
 	<stdlib.h>
 
-1587879831 /home/sca/Documents/WexChat-server/wexchat-server/wex_entity.h
+1587972157 /home/sca/Documents/WexChat-server/wexchat-server/wex_entity.h
 	<time.h>
+	"wex_data_constraints.h"
 
-1585713920 /home/sca/Documents/WexChat-server/wexchat-server/wex_data_constraints.h
+1587965838 /home/sca/Documents/WexChat-server/wexchat-server/wex_data_constraints.h
 
 1587459381 /home/sca/Documents/WexChat-server/wexchat-server/wex_protocol_parser.h
 	"wex_data_constraints.h"
@@ -116,7 +117,7 @@
 1587618038 /home/sca/Documents/WexChat-server/wexchat-server/wex_logic_interface.h
 	"wex_protocol_parser.h"
 
-1587866968 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_logic_interface.c
+1587973219 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_logic_interface.c
 	"wex_logic_interface.h"
 	"wex_data_constraints.h"
 	"wex_logic_user.h"
@@ -135,14 +136,14 @@
 	"wex_data_constraints.h"
 	"wex_userlist.h"
 
-1587880234 source:/home/sca/Documents/WexChat-server/wexchat-server/wec_query.c
+1587972574 source:/home/sca/Documents/WexChat-server/wexchat-server/wec_query.c
 	<stdio.h>
 	"wex_neo4j_connctor.h"
 	"wex_query.h"
 	"wexlog.h"
 	"wex_data_constraints.h"
 
-1587879939 /home/sca/Documents/WexChat-server/wexchat-server/wex_query.h
+1587971150 /home/sca/Documents/WexChat-server/wexchat-server/wex_query.h
 	"wex_entity.h"
 	"wex_list.h"
 
@@ -165,6 +166,19 @@
 	"wex_userlist.h"
 
 1587868386 /home/sca/Documents/WexChat-server/wexchat-server/wex_logic_message.h
+	<stdio.h>
+	<stdlib.h>
+
+1587973182 source:/home/sca/Documents/WexChat-server/wexchat-server/wex_logic_group.c
+	"wex_logic_group.h"
+	"wexlog.h"
+	"cJSON.h"
+	"wex_entity.h"
+	"wex_query.h"
+	"wex_data_constraints.h"
+	"wex_userlist.h"
+
+1587973221 /home/sca/Documents/WexChat-server/wexchat-server/wex_logic_group.h
 	<stdio.h>
 	<stdlib.h>
 

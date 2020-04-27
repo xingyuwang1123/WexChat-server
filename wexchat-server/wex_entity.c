@@ -70,6 +70,15 @@ wex_entity_msgitem *wex_entity_msgitem_alloc() {
     return item;
 }
 
+wex_entity_groupitem *wex_entity_groupitem_alloc() {
+    wex_entity_groupitem *item = malloc(sizeof(wex_entity_groupitem));
+    item->header[0] = '/0';
+    item->name[0] = '/0';
+    item->masteruid[0] = '/0';
+    item->intro[0] = '/0';
+    return item;
+}
+
 void wex_entity_user_free(wex_entity_user *user) {
     free(user->uid);
     free(user->username);
@@ -106,5 +115,9 @@ void wex_entity_msgitem_free(wex_entity_msgitem *item) {
     free(item->area);
     free(item->fromuid);
     free(item->text);
+    free(item);
+}
+
+void wex_entity_groupitem_free(wex_entity_groupitem *item) {
     free(item);
 }
