@@ -181,6 +181,49 @@ void query_allgroupinfo_by_uid_parser(neo4j_result_stream_t *results, void *resu
     }
 }
 
+void query_all_groupmember_by_id_parser(neo4j_result_stream_t *results, void *result) {
+    T_NODE *head = (T_NODE *)result;
+    neo4j_result_t *res = NULL;
+    while(res = neo4j_fetch_next(results)) {
+        neo4j_value_t value1 = neo4j_result_field(res, 0);
+        neo4j_value_t value2 = neo4j_result_field(res, 1);
+        neo4j_value_t value3 = neo4j_result_field(res, 2);
+        wex_entity_user *item = wex_entity_user_alloc();
+        sprintf(item->uid, "%ld", neo4j_int_value(value1));
+        neo4j_string_value(value2, item->nickname, MAX_SHORT_STRING_LENGTH);
+        neo4j_string_value(value3, item->header, MAX_SHORT_STRING_LENGTH);
+        list_tail_insert(head, item);
+    }
+}
+
+ void query_all_groupapplyuser_by_id_parser(neo4j_result_stream_t *results, void *result) {
+    T_NODE *head = (T_NODE *)result;
+    neo4j_result_t *res = NULL;
+    while(res = neo4j_fetch_next(results)) {
+        neo4j_value_t value1 = neo4j_result_field(res, 0);
+        neo4j_value_t value2 = neo4j_result_field(res, 1);
+        neo4j_value_t value3 = neo4j_result_field(res, 2);
+        neo4j_value_t value4 = neo4j_result_field(res, 3);
+        wex_entity_user *item = wex_entity_user_alloc();
+        sprintf(item->uid, "%ld", neo4j_int_value(value1));
+        neo4j_string_value(value2, item->nickname, MAX_SHORT_STRING_LENGTH);
+        neo4j_string_value(value3, item->header, MAX_SHORT_STRING_LENGTH);
+        neo4j_string_value(value4, item->introduction, MAX_SHORT_STRING_LENGTH);
+        list_tail_insert(head, item);
+    }
+ }
+
+ void query_groupmember_uid_by_id_parser(neo4j_result_stream_t *results, void *result) {
+    T_NODE *head = (T_NODE *)result;
+    neo4j_result_t *res = NULL;
+    while(res = neo4j_fetch_next(results)) {
+        neo4j_value_t value1 = neo4j_result_field(res, 0);
+        char *uid = malloc(sizeof(char) * MAX_UID_LENGTH);
+        sprintf(uid, "%ld", neo4j_int_value(value1));
+        list_tail_insert(head, uid);
+    }
+ }
+
 //query here
 int register_query(wex_entity_user *user) {
     char statement[256];
@@ -375,7 +418,7 @@ int update_header_by_uid(const char *uid, const char *header) {
 int create_message_query(wex_entity_msgitem *item) {
     char statement[256];
     statement[0] = '\0';
-    sprintf(statement, "create (m:MESSAGE {text:'%s',created_at:%d,fromuid:'%s',area:'%s',type:%d})",item->text, item->msgtime, item->fromuid, item->area, item->type);
+    sprintf(statement, "create (m:MESSAGE {text:'%s',created_at:%d,fromuid:'%s',area:'%s',type:%d,count:%d})",item->text, item->msgtime, item->fromuid, item->area, item->type, item->mcount);
 
     int ret = wex_neo4j_do_query(statement);
     if (ret < 0) {
@@ -410,7 +453,7 @@ int query_groupinfo_by_id(const char *gid, wex_entity_groupitem *item) {
     return 0;
 }
 
-int create_groupapply_query(const char *gid, const char *uid, const char appinfo) {
+int create_groupapply_query(const char *gid, const char *uid, const char *appinfo) {
     char statement[512];
     statement[0] = '\0';
     sprintf(statement, "match (g:Group),(n:User) where id(g)=%s and id(n)=%s create (g)-[r1:GROUPAPPLY {created_at:timestamp(),applyinfo:'%s'}]->(n)",gid,uid,appinfo);
@@ -434,6 +477,106 @@ int query_allgroupinfo_by_uid(const char *uid, T_NODE *head) {
     }
     return 0;
 
+}
+
+int query_all_groupmember_by_id(const char *gid, T_NODE *head) {
+    char statement[512];
+    statement[0] = '\0';
+    sprintf(statement, "match (g:Group)-[r1:GROUPMEMBER]->(n:User) where id(g)=%s return id(n),n.nickname,n.header union match (g:Group)-[r1:GROUPMASTER]->(n:User) where id(g)=%s return id(n),n.nickname,n.header", gid, gid);
+
+    int ret = wex_neo4j_do_query_with_result(statement, head, &query_all_groupmember_by_id_parser);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
+
+int query_all_groupapplyuser_by_id(const char *gid, T_NODE *head) {
+    char statement[512];
+    statement[0] = '\0';
+    sprintf(statement, "match (g:Group)-[r1:GROUPAPPLY]->(n:User) where id(g)=%s return id(n),n.nickname,n.header,r1.applyinfo", gid);
+
+    int ret = wex_neo4j_do_query_with_result(statement, head, &query_all_groupapplyuser_by_id_parser);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
+
+
+int delete_group_apply_by_id(const char *gid, const char *uid) {
+    char statement[512];
+    statement[0] = '\0';
+    sprintf(statement, "match (g:Group)-[r1:GROUPAPPLY]->(n:User) where id(g)=%s and id(n)=%s delete r1", gid, uid);
+    int ret = wex_neo4j_do_query(statement);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
+
+int accept_group_apply_by_id(const char *gid, const char *uid) {
+    char statement[512];
+    statement[0] = '\0';
+    sprintf(statement, "match (g:Group)-[r1:GROUPAPPLY]->(n:User) where id(g)=%s and id(n)=%s delete r1", gid, uid);
+    int ret = wex_neo4j_do_query(statement);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    sprintf(statement, "match (g:Group),(n:User) where id(g)=%s and id(n)=%s create (g)-[r2:GROUPMEMBER  {joint_at:timestamp()}]->(n)", gid, uid);
+    ret = wex_neo4j_do_query(statement);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
+
+int delete_groupmember_by_id(const char *gid, const char *uid) {
+    char statement[512];
+    statement[0] = '\0';
+    sprintf(statement, "match (g:Group)-[r1:GROUPMEMBER]->(n:User) where id(g)=%s and id(n)=%s delete r1", gid, uid);
+    int ret = wex_neo4j_do_query(statement);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
+
+int delete_group_by_id(const char *gid, const char *uid) {
+    char statement[512];
+    statement[0] = '\0';
+    sprintf(statement, "match (g:Group)-[r1:GROUPMEMBER]->(n:User) where id(g)=%s delete r1", gid);
+    int ret = wex_neo4j_do_query(statement);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    sprintf(statement, "match (g:Group)-[r1:GROUPMASTER]->(n:User) where id(g)=%s and id(n)=%s delete r1,g", gid, uid);
+    ret = wex_neo4j_do_query(statement);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
+
+int query_groupmember_uid_by_id(const char *gid, T_NODE *head) {
+    char statement[512];
+    statement[0] = '\0';
+    sprintf(statement, "match (g:Group)-[r1:GROUPMEMBER]->(n:User) where id(g)=%s return id(n) union match (g:Group)-[r1:GROUPMASTER]->(n:User) where id(g)=%s return id(n)", gid, gid);
+
+    int ret = wex_neo4j_do_query_with_result(statement, head, &query_groupmember_uid_by_id_parser);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
 }
 //int main () {
 //    int ret = wex_neo4j_connect_to_server("127.0.0.1", "7687", "neo4j", "137730");

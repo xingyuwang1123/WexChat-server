@@ -44,6 +44,7 @@ typedef struct {
     char *area;
     int type;
     time_t msgtime;
+    int mcount;
 }wex_entity_msgitem;
 
 typedef struct {

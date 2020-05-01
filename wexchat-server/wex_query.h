@@ -40,8 +40,24 @@ int create_group_query(wex_entity_groupitem *item);
 
 int query_groupinfo_by_id(const char *gid, wex_entity_groupitem *item);
 
-int create_groupapply_query(const char *gid, const char *uid, const char appinfo);
+int create_groupapply_query(const char *gid, const char *uid, const char *appinfo);
 
 int query_allgroupinfo_by_uid(const char *uid, T_NODE *head);
+
+int query_all_groupmember_by_id(const char *gid, T_NODE *head);
+
+int query_groupmember_uid_by_id(const char *gid, T_NODE *head);
+
+int query_all_groupapplyuser_by_id(const char *gid, T_NODE *head);
+
+int delete_group_apply_by_id(const char *gid, const char *uid);
+
+int accept_group_apply_by_id(const char *gid, const char *uid);
+
+int delete_groupmember_by_id(const char *gid, const char *uid);
+
+int delete_group_by_id(const char *gid, const char *uid);
+
+
 
 #endif // WEX_QUERY_H_INCLUDED

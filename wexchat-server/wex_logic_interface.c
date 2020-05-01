@@ -65,5 +65,23 @@ char *wex_logic_doenter(const char *method, char *content, size_t length, int so
     else if (!strncmp(method, "getallgroupsbyuid", MAX_METHODNAME_LENGTH)) {
         getallgroupsbyuid_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
     }
+    else if (!strncmp(method, "getallgroupmemberbugid", MAX_METHODNAME_LENGTH)) {
+        getallgroupmemberbugid_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
+    }
+    else if (!strncmp(method, "getallgroupapplyuserbygid", MAX_METHODNAME_LENGTH)) {
+        getallgroupapplyuserbygid_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
+    }
+    else if (!strncmp(method, "rejectgroupapply", MAX_METHODNAME_LENGTH)) {
+        rejectgroupapply_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
+    }
+    else if (!strncmp(method, "acceptgroupapply", MAX_METHODNAME_LENGTH)) {
+        acceptgroupapply_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
+    }
+    else if (!strncmp(method, "quitgroupbyid", MAX_METHODNAME_LENGTH)) {
+        quitgroupbyid_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
+    }
+    else if (!strncmp(method, "cleargroupbyid", MAX_METHODNAME_LENGTH)) {
+        cleargroupbyid_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
+    }
     return res;
 }
