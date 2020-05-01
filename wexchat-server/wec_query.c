@@ -224,6 +224,17 @@ void query_all_groupmember_by_id_parser(neo4j_result_stream_t *results, void *re
     }
  }
 
+ void create_message_query_with_id_parser(neo4j_result_stream_t *results, void *result) {
+    char *mid = (char *)result;
+    neo4j_result_t *res;
+    if ((res = neo4j_fetch_next(results)) == NULL) {
+        wexlog(wex_log_warning, "failed to fetch result");
+        return;
+    }
+    neo4j_value_t value1 = neo4j_result_field(res, 0);
+    sprintf(mid, "%ld", neo4j_int_value(value1));
+ }
+
 //query here
 int register_query(wex_entity_user *user) {
     char statement[256];
@@ -572,6 +583,40 @@ int query_groupmember_uid_by_id(const char *gid, T_NODE *head) {
     sprintf(statement, "match (g:Group)-[r1:GROUPMEMBER]->(n:User) where id(g)=%s return id(n) union match (g:Group)-[r1:GROUPMASTER]->(n:User) where id(g)=%s return id(n)", gid, gid);
 
     int ret = wex_neo4j_do_query_with_result(statement, head, &query_groupmember_uid_by_id_parser);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
+
+int create_message_query_with_id(wex_entity_msgitem *item, char *mid) {
+    char statement[256];
+    statement[0] = '\0';
+    sprintf(statement, "create (m:MESSAGE {text:'%s',created_at:%d,fromuid:'%s',area:'%s',type:%d,count:%d}) return id(m)",item->text, item->msgtime, item->fromuid, item->area, item->type, item->mcount);
+
+    int ret = wex_neo4j_do_query_with_result(statement, mid, &create_message_query_with_id_parser);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
+    return 0;
+}
+
+int create_messagecontain_with_id(const char *mid, T_NODE *uidlist) {
+    char statement[1024];
+    statement[0] = '\0';
+    char uidstr[MAX_GROUP_MEMBER_NUM * MAX_UID_LENGTH] = "[";
+    T_NODE *temp = uidlist;
+    while(temp->link) {
+        temp = temp->link;
+        char *uid = (char*)temp->var;
+        strncat(uidstr, uid, MAX_UID_LENGTH);
+        strncat(uidstr, ",", 1);
+    }
+    uidstr[strlen(uidstr)-1] = ']';
+    sprintf(statement, "unwind %s as uid match (m:MESSAGE),(n:User) where id(m)=%s and id(n)=uid create (m)-[r1:MESSAGECONTAIN]->(n)", uidstr, mid);
+    int ret = wex_neo4j_do_query(statement);
     if (ret < 0) {
         wexlog(wex_log_warning, "query:error  in querying neo4j");
         return -1;

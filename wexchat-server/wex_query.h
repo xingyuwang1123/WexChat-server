@@ -58,6 +58,8 @@ int delete_groupmember_by_id(const char *gid, const char *uid);
 
 int delete_group_by_id(const char *gid, const char *uid);
 
+int create_message_query_with_id(wex_entity_msgitem *item, char *mid);
 
+int create_messagecontain_with_id(const char *mid, T_NODE *uidlist);
 
 #endif // WEX_QUERY_H_INCLUDED

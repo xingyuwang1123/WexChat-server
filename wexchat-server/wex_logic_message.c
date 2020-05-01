@@ -60,32 +60,42 @@ int sendmessagetouser_processer(char *content, size_t length, char *res, size_t 
     else {
         //group message
         //find all group memner uid
+        int flag = 0;
         T_NODE *head = list_init(0);
         int ret = query_groupmember_uid_by_id(areaj->valuestring, head);
         if (ret < 0) {
             strcpy(res, "failed");
+            flag = 1;
         }
         else {
             T_NODE *temp = head;
+            T_NODE *uidList = list_init(0);
             int mcount = 0;
             while (temp->link) {
                 temp = temp->link;
                 char *uid = (char *)temp->var;
-                int retsock = -1;
-                if ((retsock = wex_find_userlist(uid)) < 0) {
-                    //offline
-                    mcount++;
-                }
-                else {
-                    //online
-                    char buf[ORIGINAL_CONTENT_LENGTH];
+                if (strncmp(uid, fromuidj->valuestring, MAX_UID_LENGTH)) {
+                    int retsock = -1;
+                    if ((retsock = wex_find_userlist(uid)) < 0) {
+                        //offline
+                        mcount++;
+                        char *newuid = malloc(sizeof(char) * MAX_UID_LENGTH);
+                        strncpy(newuid, uid, MAX_UID_LENGTH);
+                        list_tail_insert(uidList, newuid);
+                    }
+                    else {
+                        //online
+                        char buf[ORIGINAL_CONTENT_LENGTH];
 
-                    sprintf(buf, "BRO 00 WEX/1.0 %d \n%s", length, content);
-                    int slen = strlen(buf);
-                    int ret = write(retsock, buf, slen);
-                    if (ret != slen) {
-                        wexlog(wex_log_error_with_perror, "err in writing in message");
-                        strcpy(res, "warning");
+                        sprintf(buf, "BRO 00 WEX/1.0 %d \n%s", length, content);
+                        int slen = strlen(buf);
+                        int ret = write(retsock, buf, slen);
+                        if (ret != slen) {
+                            wexlog(wex_log_error_with_perror, "err in writing in message");
+                            strcpy(res, "warning");
+                            flag = 1;
+                        }
+
                     }
                 }
             }
@@ -98,14 +108,31 @@ int sendmessagetouser_processer(char *content, size_t length, char *res, size_t 
                 item->msgtime = msgtimej->valueint;
                 item->type= typej->valueint;
                 item->mcount = mcount;
-                int ret = create_message_query(item);
+                char mid[MAX_UID_LENGTH];
+                int ret = create_message_query_with_id(item, mid);
                 if (ret < 0) {
                     strcpy(res, "failed");
+                    flag = 1;
+                }
+                else {
+                    //create relation
+                    int ret = create_messagecontain_with_id(mid, uidList);
+                    if (ret < 0) {
+                        strcpy(res, "failed");
+                        flag = 1;
+                    }
+
                 }
                 wex_entity_msgitem_free(item);
+                //create relation with message
+
             }
+            del_list(uidList, &free);
         }
         del_list(head, &free);
+        if (!flag) {
+            strcpy(res, "ok");
+        }
 
     }
     cJSON_Delete(json);
