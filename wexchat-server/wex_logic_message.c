@@ -139,3 +139,34 @@ int sendmessagetouser_processer(char *content, size_t length, char *res, size_t 
 
     return 0;
 }
+
+int fetchofflinemessage_processer(char *content, size_t length, char *res, size_t res_length, int socket) {
+    char uid[MAX_UID_LENGTH];
+    strncpy(uid, content, MAX_UID_LENGTH);
+    T_NODE *head = list_init(0);
+    int ret = query_messagecontain_with_uid(uid, head);
+    if (ret < 0) {
+        strcpy(res, "failed");
+    }
+    else {
+        cJSON *arr = cJSON_CreateArray();
+        T_NODE *temp = head;
+        while (temp->link) {
+            temp = temp->link;
+            wex_entity_msgitem *item = (wex_entity_msgitem *)temp->var;
+            cJSON *node = cJSON_CreateObject();
+            cJSON_AddItemToObject(node, "type", cJSON_CreateNumber(item->type));
+            cJSON_AddItemToObject(node, "text", cJSON_CreateString(item->text));
+            cJSON_AddItemToObject(node, "msgtime", cJSON_CreateNumber(item->msgtime));
+            cJSON_AddItemToObject(node, "id", cJSON_CreateString(item->fromuid));
+            cJSON_AddItemToObject(node, "area", cJSON_CreateString(item->area));
+            cJSON_AddItemToArray(arr, node);
+        }
+        char *tempbuf = cJSON_PrintUnformatted(arr);
+        strncpy(res, tempbuf, ORIGINAL_CONTENT_LENGTH);
+        free(tempbuf);
+        free(arr);
+    }
+    del_list(head, &wex_entity_msgitem_free);
+    return 0;
+}

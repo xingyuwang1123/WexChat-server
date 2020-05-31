@@ -62,4 +62,6 @@ int create_message_query_with_id(wex_entity_msgitem *item, char *mid);
 
 int create_messagecontain_with_id(const char *mid, T_NODE *uidlist);
 
+int query_messagecontain_with_uid(const char *uid, T_NODE *msglist);
+
 #endif // WEX_QUERY_H_INCLUDED

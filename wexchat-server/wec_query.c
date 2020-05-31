@@ -235,6 +235,25 @@ void query_all_groupmember_by_id_parser(neo4j_result_stream_t *results, void *re
     sprintf(mid, "%ld", neo4j_int_value(value1));
  }
 
+ void query_messagecontain_with_uid_parser(neo4j_result_stream_t *results, void *result) {
+    T_NODE *head = (T_NODE *)result;
+    neo4j_result_t *res = NULL;
+    while(res = neo4j_fetch_next(results)) {
+        neo4j_value_t value1 = neo4j_result_field(res, 0);
+        neo4j_value_t value2 = neo4j_result_field(res, 1);
+        neo4j_value_t value3 = neo4j_result_field(res, 2);
+        neo4j_value_t value4 = neo4j_result_field(res, 3);
+        neo4j_value_t value5 = neo4j_result_field(res, 4);
+        wex_entity_msgitem *item = wex_entity_msgitem_alloc();
+        item->type = neo4j_int_value(value1);
+        neo4j_string_value(value2, item->text, MAX_SHORT_STRING_LENGTH);
+        item->msgtime = neo4j_int_value(value3);
+        neo4j_string_value(value4, item->fromuid, MAX_SHORT_STRING_LENGTH);
+        neo4j_string_value(value5, item->area, MAX_SHORT_STRING_LENGTH);
+        list_tail_insert(head, item);
+    }
+ }
+
 //query here
 int register_query(wex_entity_user *user) {
     char statement[256];
@@ -622,6 +641,17 @@ int create_messagecontain_with_id(const char *mid, T_NODE *uidlist) {
         return -1;
     }
     return 0;
+}
+
+int query_messagecontain_with_uid(const char *uid, T_NODE *msglist) {
+    char statement[512];
+    statement[0] = '\0';
+    sprintf(statement,"match (m:MESSAGE) where m.type=0 and m.area='%s' return m.type,m.text,m.created_at,m.fromuid,m.area union match (m:MESSAGE)-[r1:MESSAGECONTAIN]->(n:User) where id(n)=%s return m.type,m.text,m.created_at,m.fromuid,m.area",uid, uid);
+    int ret = wex_neo4j_do_query_with_result(statement, msglist, &query_messagecontain_with_uid_parser);
+    if (ret < 0) {
+        wexlog(wex_log_warning, "query:error  in querying neo4j");
+        return -1;
+    }
 }
 //int main () {
 //    int ret = wex_neo4j_connect_to_server("127.0.0.1", "7687", "neo4j", "137730");

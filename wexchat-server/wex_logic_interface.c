@@ -83,5 +83,8 @@ char *wex_logic_doenter(const char *method, char *content, size_t length, int so
     else if (!strncmp(method, "cleargroupbyid", MAX_METHODNAME_LENGTH)) {
         cleargroupbyid_processer(content, length, res, ORIGINAL_CONTENT_LENGTH);
     }
+    else if (!strncmp(method, "fetchofflinemessage", MAX_METHODNAME_LENGTH)) {
+        fetchofflinemessage_processer(content, length, res, ORIGINAL_CONTENT_LENGTH, socket);
+    }
     return res;
 }

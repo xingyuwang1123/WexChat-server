@@ -3,7 +3,7 @@
 
 //define some data cnostraints here
 
-#define MAX_SHORT_STRING_LENGTH 128
+#define MAX_SHORT_STRING_LENGTH 256
 
 #define NETWORK_BUFF_SIZE 1024
 
